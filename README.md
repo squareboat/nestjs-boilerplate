@@ -136,14 +136,14 @@ return res.success({ message: 'Hello there!' });
 return res.error('Unauthorized!');
 ```
 
--- `noContent()`: There are cases when we need to send only a success status code and no body. `noContent()` will come in handy for you.
+- `noContent()`: There are cases when we need to send only a success status code and no body. `noContent()` will come in handy for you.
 
 ```javascript
 // will return a response with status code of 204
 return res.noContent();
 ```
 
--- `withMeta(data: Record<string, any>, status = 200)`: There can be some case where we need to send some payload to support our requested data. For example, pagination information incase of a paginated response. `withMeta` helps you achieve the same.
+- `withMeta(data: Record<string, any>, status = 200)`: There can be some case where we need to send some payload to support our requested data. For example, pagination information incase of a paginated response. `withMeta` helps you achieve the same.
 
 ```javascript
 /**
