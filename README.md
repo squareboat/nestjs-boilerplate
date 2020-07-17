@@ -11,13 +11,20 @@ A production 🏭 ready NestJS boilerplate with batteries 🔋 included. No Kidd
   - [NPM Commands](#npm-commands)
   - [Batteries](#batteries)
     - [Request Helpers](#request-helpers)
+    - [Response Helpers](#response-helpers)
+    - [Controllers](#controllers)
+    - [Exception Handling](#exception-handling)
+    - [Helpers](#helpers)
+    - [Repositories](#repositories)
+    - [Transformers](#transformers)
+    - [Validators](#validators)
   - [Contributing](#contributing)
   - [About Us](#about-us)
   - [License](#license)
 
 ## Introduction
 
-We started working with NestJS few months back, we were blown away with the functionalities that it provides 🙇🙌. But for our use case we needed something more than just basic functionalities, that is when our team started working 🧑‍💻t on a boilerplate, which can be used for any project.
+We started working with NestJS few months back, we were blown away with the functionalities that it provides 🙇🙌. But for our use case we needed something more than just basic functionalities, that is when our team started working 🧑‍💻 on a boilerplate, which can be used for any project.
 
 This boilerplate helps avoid the redundancy cycle each developer has to go through, it handles most of the repetitive 🔁 and tedious ⏲️ tasks, that (imma be honest 🤷) nobody likes.
 
@@ -92,6 +99,84 @@ npm run migration:down
 We have added some small and big batteries 🔋 to achieve the stage where a developer don't have to worry about such things ❤️.
 
 ### Request Helpers
+
+1. `all()`: Method to get the incoming parameters, all at once. No need to get `body`, `queryParams`, and `params` seperately every time.
+
+```javascript
+const inputs = req.all();
+```
+
+### Response Helpers
+
+We have our own very generous set of api guidelines, we used our learning of multiple projects to provide structural consistency of response object (which is often unknowningly abused).
+
+- `success(data: Record<string, any>, status=200)`: Returns the success response, use this whenever your request is succesfull, usually for GET and POST requests.
+
+```javascript
+/**
+ * {
+ *  success: true,
+ *  code: 200,
+ *  data: { message: "Hello There" }
+ * };
+ **/
+return res.success({ message: 'Hello there!' });
+```
+
+- `error(error: Record<string, any> | string, status = 401)`: Returns the error response, used in exception filter.
+
+```javascript
+/**
+ * {
+ *  success: false,
+ *  code: 401,
+ *  message: 'Unauthorized'
+ * };
+ **/
+return res.error('Unauthorized!');
+```
+
+-- `noContent()`: There are cases when we need to send only a success status code and no body. `noContent()` will come in handy for you.
+
+```javascript
+// will return a response with status code of 204
+return res.noContent();
+```
+
+-- `withMeta(data: Record<string, any>, status = 200)`: There can be some case where we need to send some payload to support our requested data. For example, pagination information incase of a paginated response. `withMeta` helps you achieve the same.
+
+```javascript
+/**
+ * {
+ *  success: true,
+ *  code: 200,
+ *  data:[{},{},{}]
+ *  meta: {
+ *    pagination: {
+ *      totalPages: 10,
+ *      currentPage: 2,
+ *    },
+ *    ...some other custom attributes
+ *  }
+ * };
+ **/
+return res.withMeta({
+  data: [{}, {}],
+  pagination: { totalPages: 10, currentPage: 2 },
+});
+```
+
+### Controllers
+
+### Exception Handling
+
+### Helpers
+
+### Repositories
+
+### Transformers
+
+### Validators
 
 🚧 Soon to be updated! 🚧
 
