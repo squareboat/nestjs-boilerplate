@@ -2,6 +2,8 @@
 
 A production 🏭 ready NestJS boilerplate with batteries 🔋 included. No Kidding!
 
+![alt image](cover.png)
+
 ## Table of Content
 
 - [NestJS Boilerplate](#nestjs-boilerplate)
@@ -10,14 +12,15 @@ A production 🏭 ready NestJS boilerplate with batteries 🔋 included. No Kidd
   - [Getting Started](#getting-started)
   - [NPM Commands](#npm-commands)
   - [Batteries](#batteries)
+    - [Configuration](#configuration)
     - [Request Helpers](#request-helpers)
     - [Response Helpers](#response-helpers)
-    - [Controllers](#controllers)
     - [Exception Handling](#exception-handling)
     - [Helpers](#helpers)
-    - [Repositories](#repositories)
     - [Transformers](#transformers)
+    - [Controllers](#controllers)
     - [Validators](#validators)
+    - [Repositories](#repositories)
   - [Contributing](#contributing)
   - [About Us](#about-us)
   - [License](#license)
@@ -32,7 +35,7 @@ This boilerplate helps avoid the redundancy cycle each developer has to go throu
 
 If you using Github GUI 🖥️ to initiate your project, consider following [this github doc.](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template)
 
-Github CLI 🔮 users, focus here:
+Git CLI 🔮 users, focus here:
 
 ```python
 # head to your workspace
@@ -97,6 +100,10 @@ npm run migration:down
 ## Batteries
 
 We have added some small and big batteries 🔋 to achieve the stage where a developer don't have to worry about such things ❤️.
+
+### Configuration
+
+🚧 Soon to be updated! 🚧
 
 ### Request Helpers
 
@@ -166,27 +173,207 @@ return res.withMeta({
 });
 ```
 
-### Controllers
-
-🚧 Soon to be updated! 🚧
-
 ### Exception Handling
 
-🚧 Soon to be updated! 🚧
+NestJS provides option of writing your own exception filters. We have added an exception filter with all the necessary exceptions to help you get started on the project very quickly.
+
+> No configuration is needed on your side. It is already added as a Global filter. 💥
 
 ### Helpers
+
+Think of this as a randomly used stateless functions which can be used anywhere and anytime. We have included a bunch of "helper" functions. Many of them are used inside the template, you are free to use it at your convenience.
+
+- `uuid(): string`: Generate and returns a v4 uuid string.
+
+- `randomNumber(n: number): string` - Takes `n` param as length and returns a random numeric string.
+
+- `httpBuildQuery(url: string, params = {})` - Takes `url` and `params` object, and returns a url with query string attached.
+
+```javascript
+/**
+ * https://example.com?q=some%20search%20term
+ */
+httpBuildQuery('https://example.com', { q: 'some search term' });
+```
+
+- `basePath()`: Get the root/base path of the project, irrespective of the directory that you are in.
+
+> You may want to add your helper function, you can do so by adding it to `/src/core/helpers/index.ts` file
+
+### Transformers
+
+Transformer provides a presentation and transformation layer for complex data output, for example JSON response in REST APIs. Let's see any example on how it works.
+
+> Supports only JSON response for now.
+
+We have already added a base `Transformer` class inside the `core` module, the driver of our logic.
+
+- Let's create a `BookTransformer` for a model, say `Book`.
+
+```javascript
+// src/transformers/book.ts
+import { Transformer } from '@app/core';
+
+export class BookTransformer extends Transformer {
+  async transform(book: Record<string, any>): Promise<Record<string, any>> {
+    return {
+      id: book.uuid,
+      name: book.name,
+      publisherName: book.publisher,
+      publishedOn: moment(book.publishedAt).format('YYYY-MM-DD'),
+    };
+  }
+}
+```
+
+Now to use the transformer, follow the steps below:
+
+```javascript
+//TheFileWhereYouWantToUseIt.ts
+import { BookTransformer } from '@app/transformers/book';
+
+const transformer = new BookTransformer();
+const payload = await transformer.work({
+  uuid: '75442486-0878-440c-9db1-a7006c25a39f',
+  name: "NestJS Boilerplate",
+  publisher: 'Squareboat'
+  publishedAt: "2020-12-03 22:00:00",
+});
+
+/**
+ * {
+ *  id: "75442486-0878-440c-9db1-a7006c25a39f",
+ *  name: "NestJS BoilerPlate",
+ *  publisherName: "Squareboat",
+ *  publishedAt: '2020-12-03'
+ * }
+ */
+console.log(payload)
+```
+
+_Wait_, transformer provide much more than a wrapper class.
+While creating REST APIs you may come across a case where you want to fetch some related data with the main data.
+
+For example, you may want to fetch author details along with the details of the book's detail that you requested.
+
+Transformer provides an option to add all the available includes and default includes a transformer.
+
+```javascript
+// src/transformers/book.ts
+import { Transformer } from '@app/core';
+
+export class BookTransformer extends Transformer {
+  availableIncludes = ['author'];
+  defaultIncludes = [];
+
+  async transform(book: Record<string, any>): Promise<Record<string, any>> {
+    return {
+      id: book.uuid,
+      name: book.name,
+      publisherName: book.publisher,
+      publishedOn: moment(book.publishedAt).format('YYYY-MM-DD'),
+    };
+  }
+
+  async includeAuthor(book: Record<string, any>): Promise<Record<string, any>> {
+    // fetch author of the book
+    const author = book.author;
+    return this.item(book.author, new AuthorTransformer());
+  }
+}
+```
+
+> Notice the "author" inside the `availableIncludes` and `includeAuthor` method, transformer will add include namespace to the requested include.
+
+> AuthorTransformer is just like BookTransformer, but responsible for transformer author model.
+
+Now to use the include the `author` option, we need to pass the `include` queryParam in the URL, like:
+`/books/75442486-0878-440c-9db1-a7006c25a39f?include=author`
+
+> For multiple includes, send comma seperated include options like include=author,publisher,releaseDetails
+
+Now, inside your controller, do the following:
+
+```javascript
+//BookController.ts
+import { Get} from '@nestjs/common';
+import { BookTransformer } from '@app/transformers/book';
+
+
+// inside the Books Controller
+@Get('/books/:uuid')
+async get(@Req() req: Request, @Res() res: Response): Promise<Response> {
+  const inputs = req.all();
+  const transformer = new BookTransformer();
+  const payload = await transformer
+  .parseIncludes(inputs.include)
+  .work({
+    uuid: '75442486-0878-440c-9db1-a7006c25a39f',
+    name: "NestJS Boilerplate",
+    publisher: 'Squareboat'
+    publishedAt: "2020-12-03 22:00:00",
+  });
+
+  /**
+   * {
+   *  id: "75442486-0878-440c-9db1-a7006c25a39f",
+   *  name: "NestJS BoilerPlate",
+   *  publisherName: "Squareboat",
+   *  publishedAt: '2020-12-03',
+   *  "author": {"id": "a1", "name": "Vinayak Sarawagi"}
+   * }
+   */
+  return res.success(payload);
+}
+```
+
+In the `Controllers` topic, we will discuss how we have managed to automate these steps also.
+
+### Controllers
+
+Developers coming from MVC will know what is a controller and how it helps us to handle the request and response lifecycle.
+
+For elegant handling we have added a base `ApiController` which has all the necessary functions to handle the response transformation.
+
+- `transform(obj, transformer, options?)`: You might have noticed in the previous snippets, on how we created an instance of the transformer and ran the methods to process an output. To handle it more beautifully, you can handle it like below:
+
+```javascript
+//BookController.ts
+import { Get} from '@nestjs/common';
+import { BookTransformer } from '@app/transformers/book';
+
+
+// inside the Books Controller
+@Get('/books/:uuid')
+async get(@Req() req: Request, @Res() res: Response): Promise<Response> {
+  const inputs = req.all();
+  const book = {
+    uuid: '75442486-0878-440c-9db1-a7006c25a39f',
+    name: "NestJS Boilerplate",
+    publisher: 'Squareboat'
+    publishedAt: "2020-12-03 22:00:00",
+  };
+
+  /**
+   * Coding Pattern changed, output remains the same a above
+   */
+  return res.success(await this.transform(
+    book, new BookTransformer, {req}
+  ))
+}
+```
+
+Notice, the `{req}` object that we are passing as third param, the base `ApiController` itself handles reading the url and parsing the includes. Now we don't need to do the tedious task again and again. 😃
+
+- `collection(obj, transformer, options?)`: Same responsibility as the `transform` method. Use this whenever you need to transform an `array`.
+- `paginate(obj, transformer, options?)`: Breaks down the `obj` passed into transformed data and pagination data. Expects the `obj` to include `pagination` key.
+  > If you are dealing with some other key than `pagination`, you can change the key name inside `paginate` method in src/core/controllers/ApiController.ts file.
+
+### Validators
 
 🚧 Soon to be updated! 🚧
 
 ### Repositories
-
-🚧 Soon to be updated! 🚧
-
-### Transformers
-
-🚧 Soon to be updated! 🚧
-
-### Validators
 
 🚧 Soon to be updated! 🚧
 
