@@ -1,5 +1,7 @@
 # NestJS Boilerplate
 
+[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?url=https%3A%2F%2Fgithub.com%2Fsquareboat%2Fnestjs-boilerplate&text=A%20production-ready%20NestJS%20boilerplate%20with%20batteries%20included.%20No%20Kidding%21&hashtags=nestjs%2Cnestjsboilerplate)
+
 A production 🏭 ready NestJS boilerplate with batteries 🔋 included. No Kidding!
 
 ![alt image](cover.png)
