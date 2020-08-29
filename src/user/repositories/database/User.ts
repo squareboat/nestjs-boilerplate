@@ -1,10 +1,13 @@
 import { User } from '../../models';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DatabaseRepository as DB } from '@app/core';
+import { Injectable } from '@nestjs/common';
+import {
+  DatabaseRepository as DB,
+  InjectModel,
+} from '@app/core';
 import { UserRepositoryContract } from '../contracts';
 
+@Injectable()
 export class UserRepository extends DB implements UserRepositoryContract {
-  @InjectRepository(User)
-  entity: Repository<User>;
+  @InjectModel(User)
+  model: User;
 }

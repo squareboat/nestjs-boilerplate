@@ -7,13 +7,13 @@ export class UserService {
   constructor(
     @Inject(USER_REPOSITORY) private users: UserRepositoryContract,
     private http: HttpService,
-  ) {}
+  ) { }
 
-  async getProfile(inputs: Record<string, any>): Promise<Record<string, any>> {
-    return { id: 1, name: 'NestJS Boilerplate' };
+  async get(): Promise<Record<string, any>> {
+    return this.users.firstWhere({});
   }
 
-  async getByToken(token: string): Promise<Record<string, any>> {
-    return { id: 1, name: 'NestJS Boilerplate' };
+  getByToken(bearer: any): any {
+    throw new Error("Method not implemented.");
   }
 }

@@ -1,22 +1,5 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { BaseModel } from '@app/core';
 
-@Entity('users')
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  mongoId: string;
-
-  @Column()
-  createdAt: Date;
-
-  @Column()
-  updatedAt: Date;
+export class User extends BaseModel {
+  static tableName = 'users';
 }

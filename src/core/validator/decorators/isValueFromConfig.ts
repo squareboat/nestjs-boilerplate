@@ -13,7 +13,7 @@ import { ConfigService } from '@nestjs/config';
 @ValidatorConstraint({ async: false })
 export class IsValueFromConfigConstraint
   implements ValidatorConstraintInterface {
-  constructor(private config: ConfigService) {}
+  constructor(private config: ConfigService) { }
 
   validate(value: string, args: ValidationArguments): boolean {
     const [options] = args.constraints;
@@ -52,7 +52,7 @@ export function IsValueFromConfig(
   options: Record<string, any>,
   validationOptions?: ValidationOptions,
 ) {
-  return function(object: Record<string, any>, propertyName: string): void {
+  return function (object: Record<string, any>, propertyName: string): void {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,

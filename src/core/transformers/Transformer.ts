@@ -1,11 +1,11 @@
 import { compact, concat, intersection, uniq, camelCase } from 'lodash';
-import { TransformerContext } from './TransformerContext';
+import { Context } from '../utils/Context';
 
 export abstract class Transformer {
   availableIncludes = [];
   defaultIncludes = [];
   protected includes = [];
-  context = new TransformerContext();
+  ctx = new Context();
 
   abstract async transform(object: any): Promise<Record<string, any> | null>;
 

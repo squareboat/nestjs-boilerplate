@@ -1,5 +1,5 @@
 export interface RepositoryContract {
-  entity: any;
+  model: any;
 
   /**
    * Get all rows
@@ -72,6 +72,12 @@ export interface RepositoryContract {
   ): Promise<number | null>;
 
   /**
+   * Check if any model exists where condition is matched
+   * @param params
+   */
+  exists(params: Record<string, any>): Promise<boolean>;
+
+  /**
    * Get count of rows matching a criteria
    * @param params
    */
@@ -97,6 +103,23 @@ export interface RepositoryContract {
    * @param params
    */
   deleteWhere(params): Promise<boolean>;
+
+  /**
+   * Relate ids to a model
+   * @param model
+   * @param relation
+   * @param payload
+   */
+  attach(
+    model,
+    relation,
+    payload: number | string | Array<number | string> | Record<string, any>,
+  ): Promise<void>;
+
+  /**
+   * Fetch a chunk and run callback
+   */
+  chunk(where: Record<string, any>, size: number, cb: Function): Promise<void>;
 
   /**
    * Throws model not found exception.
