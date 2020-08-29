@@ -1,14 +1,17 @@
-import { isEmpty } from 'lodash';
-import { ModelNotFoundException } from '../exceptions';
+import { isEmpty } from '../../helpers/Helpers';
 import { RepositoryContract } from './Contract';
+import { ModelNotFoundException } from '../../exceptions';
+import { BaseModel } from '../BaseModel';
+import { CustomQueryBuilder } from '../QueryBuilder';
+
 export class DatabaseRepository implements RepositoryContract {
-  entity = null;
+  model: any;
 
   /**
    * Get all rows
    */
   async all(): Promise<Array<Record<string, any>> | []> {
-    return await this.query().find();
+    return await this.query();
   }
 
   /**
@@ -23,9 +26,8 @@ export class DatabaseRepository implements RepositoryContract {
     inputs = inputs || {};
     const query = this.query();
     const model = await query.findOne(inputs);
-    if (error && isEmpty(model)) {
-      this.raiseError();
-    }
+
+    if (error && isEmpty(model)) this.raiseError();
 
     return model;
   }
@@ -37,9 +39,19 @@ export class DatabaseRepository implements RepositoryContract {
    */
   async getWhere(
     inputs: Record<string, any>,
-    error?: boolean,
+    error = true,
   ): Promise<Array<Record<string, any>> | []> {
-    return [];
+    const query = this.query();
+
+    for (const key in inputs) {
+      Array.isArray(inputs[key])
+        ? query.whereIn(key, inputs[key])
+        : query.where(key, inputs[key]);
+    }
+    const models = await query;
+    if (error && isEmpty(models)) this.raiseError();
+
+    return models;
   }
 
   /**
@@ -47,7 +59,7 @@ export class DatabaseRepository implements RepositoryContract {
    * @param inputs
    */
   async create(inputs: Record<string, any>): Promise<Record<string, any>> {
-    return await this.query().insert(inputs);
+    return await this.query().insertAndFetch(inputs);
   }
 
   /**
@@ -59,7 +71,13 @@ export class DatabaseRepository implements RepositoryContract {
     conditions: Record<string, any>,
     values: Record<string, any>,
   ): Promise<Record<string, any>> {
-    return {};
+    const model = await this.firstWhere(conditions, false);
+    if (!model) {
+      return this.create({ ...conditions, ...values });
+    }
+
+    await this.update(model, values);
+    return await this.refresh(model);
   }
 
   /**
@@ -83,10 +101,12 @@ export class DatabaseRepository implements RepositoryContract {
    * @param setValues
    */
   async update(
-    model: any,
+    model: Record<string, any>,
     setValues: Record<string, any>,
   ): Promise<number | null> {
-    return null;
+    const query = this.query();
+    query.findById(model.id).patch(setValues);
+    return await query;
   }
 
   /**
@@ -99,7 +119,19 @@ export class DatabaseRepository implements RepositoryContract {
     where: Record<string, any>,
     setValues: Record<string, any>,
   ): Promise<number | null> {
-    return null;
+    const query = this.query();
+    query.where(where).patch(setValues);
+    return await query;
+  }
+
+  /**
+   * Check if any model exists where condition is matched
+   * @param params
+   */
+  async exists(params: Record<string, any>): Promise<boolean> {
+    const query = this.query();
+    query.where(params);
+    return !!(await query.onlyCount());
   }
 
   /**
@@ -107,7 +139,9 @@ export class DatabaseRepository implements RepositoryContract {
    * @param params
    */
   async count(params): Promise<number> {
-    return 1;
+    const query = this.query();
+    query.where(params);
+    return await query.onlyCount();
   }
 
   /**
@@ -116,7 +150,9 @@ export class DatabaseRepository implements RepositoryContract {
    * @param model
    */
   async delete(model): Promise<boolean> {
-    return true;
+    return !!+(await this.query().deleteById(
+      model instanceof BaseModel ? model.id : model,
+    ));
   }
 
   /**
@@ -124,8 +160,14 @@ export class DatabaseRepository implements RepositoryContract {
    *
    * @param params
    */
-  async deleteWhere(params): Promise<boolean> {
-    return true;
+  async deleteWhere(params: Record<string, any>): Promise<boolean> {
+    const query = this.query();
+    for (const key in params) {
+      Array.isArray(params[key])
+        ? query.whereIn(key, params[key])
+        : query.where(key, params[key]);
+    }
+    return !!+(await query.delete());
   }
 
   /**
@@ -134,7 +176,32 @@ export class DatabaseRepository implements RepositoryContract {
    * @param model
    */
   async refresh(model): Promise<Record<string, any> | null> {
-    return model;
+    return model ? await this.query().findById(model.id) : null;
+  }
+
+  /**
+   * Relate ids to a model
+   * @param model
+   * @param relation
+   * @param payload
+   */
+  async attach(model, relation: string, payload): Promise<void> {
+    await model.$relatedQuery(relation).relate(payload);
+    return;
+  }
+
+  /**
+   * Fetch a chunk and run callback
+   */
+  async chunk(
+    where: Record<string, any>,
+    size: number,
+    cb: Function,
+  ): Promise<void> {
+    const query = this.query();
+    query.where(where);
+    await query.chunk(cb, size);
+    return;
   }
 
   /**
@@ -149,11 +216,11 @@ export class DatabaseRepository implements RepositoryContract {
   /**
    * Returns new Query Builder Instance
    */
-  query() {
-    return this.entity;
+  query(): CustomQueryBuilder<any, any> {
+    return this.model.query();
   }
 
   getEntityName(): string {
-    return this.entity.metadata.name;
+    return this.model.name;
   }
 }

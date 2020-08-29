@@ -1,9 +1,8 @@
 import config from '@config/index';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from '@app/user';
-import { DbConfigService, DbModule } from '@app/_db';
 import { CoreModule } from '@app/core';
+import { DbModule } from '@app/_db';
 
 export default [
   ConfigModule.forRoot({
@@ -11,14 +10,7 @@ export default [
     expandVariables: true,
     load: config,
   }),
-
-  TypeOrmModule.forRootAsync({
-    useClass: DbConfigService,
-  }),
-
   CoreModule,
-
   UserModule,
-
   DbModule,
 ];

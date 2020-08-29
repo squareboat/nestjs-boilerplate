@@ -68,7 +68,7 @@ export class ApiController {
     options: Record<string, any>,
   ): Transformer {
     // add request object to the transformer's context
-    transformer.context.add('request', options?.req || {});
+    transformer.ctx.setRequest(options?.req || {});
     return transformer;
   }
 

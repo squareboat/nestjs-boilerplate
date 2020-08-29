@@ -20,8 +20,7 @@ async function bootstrap() {
   app.use(rateLimit({ windowMs: 60, max: 50 }));
 
   // guards
-  const userService = app.select(UserModule).get(UserService, { strict: true });
-  app.useGlobalGuards(new RequestGaurd(), new CanBeAuthenticated(userService));
+  app.useGlobalGuards(new RequestGaurd(),);
 
   // filters
   const { httpAdapter } = app.get(HttpAdapterHost);

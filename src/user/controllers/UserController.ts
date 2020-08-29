@@ -1,6 +1,7 @@
 import { ApiController, Request, Response } from '@app/core';
 import { Controller, Get, Req, Res } from '@nestjs/common';
 import { UserService } from '../services';
+import { UserDetailTransformer } from '@app/transformer';
 
 @Controller('users')
 export class UserController extends ApiController {
@@ -10,10 +11,10 @@ export class UserController extends ApiController {
 
   @Get('/profile')
   async getProfile(
-    @Req() _req: Request,
-    @Res() _res: Response,
+    @Req() req: Request,
+    @Res() res: Response,
   ): Promise<Response> {
-    const user = await this.users.getProfile(_req.all());
-    return _res.success(user);
+    const user = await this.users.get();
+    return res.success(await this.transform(user, new UserDetailTransformer, { req }));
   }
 }

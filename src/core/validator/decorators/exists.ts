@@ -5,29 +5,41 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
+import { KNEX_CONNECTION } from '../../constants';
+import Knex = require('knex');
+import { isEmpty } from '@app/core/helpers/Helpers';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
 export class ExistsConstraint implements ValidatorConstraintInterface {
+  constructor(@Inject(KNEX_CONNECTION) private connection: Knex) { }
+
   public async validate(
-    value: string,
+    value: string | string[],
     args: ValidationArguments,
   ): Promise<boolean> {
-    const [options] = args.constraints;
-    const params = {};
-    params[options.column] = value;
+    if (isEmpty(value)) return false;
 
-    if (options.caseInsensitive) {
-      params[options.column] =
-        typeof value === 'string' ? value.toLowerCase() : value;
+    const [{ table, column, caseInsensitive, where }] = args.constraints;
+
+    if (caseInsensitive) {
+      value = Array.isArray(value)
+        ? value.map(v => v.toLowerCase())
+        : value.toLowerCase();
     }
 
-    // if (options.column === '_id') {
-    //   params[options.column] = new m.Types.ObjectId(value);
-    // }
+    const query = this.connection(table);
+    Array.isArray(value)
+      ? query.whereIn(column, value)
+      : query.where(column, value);
 
-    return false;
+    if (where) query.where(where);
+
+    const result = await query.count({ count: '*' });
+    const record = result.first() || {};
+    const count = +record['count'];
+    return Array.isArray(value) ? value.length === count : !!count;
   }
 
   defaultMessage(args: ValidationArguments) {
@@ -37,10 +49,15 @@ export class ExistsConstraint implements ValidatorConstraintInterface {
 }
 
 export function Exists(
-  options: Record<string, any>,
+  options: {
+    table: string;
+    column?: string;
+    caseInsensitive?: boolean;
+    where?: Record<string, any>;
+  },
   validationOptions?: ValidationOptions,
 ) {
-  return function(object: Record<string, any>, propertyName: string): void {
+  return function (object: Record<string, any>, propertyName: string): void {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
