@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/squareboat/nestjs-boilerplate",
   "scripts": {
+    "setup": "npm link",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -41,13 +42,18 @@
     "seed:run": "npm run knex seed:run",
     "seed:make": "npm run knex seed:make -- -x ts"
   },
+  "bin": {
+    "nestjs-boilerplate": "./dist/src/cli.js"
+  },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
     "@nestjs/config": "^0.5.0",
     "@nestjs/core": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
+    "chalk": "^4.1.0",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
+    "cli-table3": "^0.6.0",
     "dotenv": "^8.2.0",
     "express-rate-limit": "^5.1.3",
     "helmet": "^3.23.3",
@@ -59,16 +65,19 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
-    "uuid": "^8.2.0"
+    "uuid": "^8.2.0",
+    "yargs": "^16.0.3"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.0.0",
     "@nestjs/schematics": "^7.0.0",
     "@nestjs/testing": "^7.0.0",
+    "@types/chalk": "^2.2.0",
     "@types/express": "^4.17.3",
     "@types/jest": "25.1.4",
     "@types/node": "^13.9.1",
     "@types/supertest": "^2.0.8",
+    "@types/yargs": "^15.0.7",
     "@typescript-eslint/eslint-plugin": "^2.23.0",
     "@typescript-eslint/parser": "^2.23.0",
     "eslint": "^6.8.0",
