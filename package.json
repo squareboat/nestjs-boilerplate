@@ -1,6 +1,6 @@
 {
   "name": "nestjs-boilerplate",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "A production ready NestJS boilerplate with batteries included. No Kidding!",
   "author": "Vinayak Sarawagi <vinayaksarawagi25@gmail.com>",
   "private": false,
