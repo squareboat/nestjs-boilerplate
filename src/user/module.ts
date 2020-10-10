@@ -3,14 +3,14 @@ import { UserController } from './controllers';
 import { UserService } from './services';
 import { USER_REPOSITORY } from './constants';
 import { UserRepository } from './repositories';
-import { CreateUser } from './commands';
+import { GreetUser } from './commands';
 
 @Module({
   imports: [HttpModule],
   controllers: [UserController],
   providers: [
     UserService,
-    CreateUser,
+    GreetUser,
     { provide: USER_REPOSITORY, useClass: UserRepository },
   ],
 })

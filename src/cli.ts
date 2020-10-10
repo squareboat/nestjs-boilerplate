@@ -13,7 +13,7 @@ async function bootstrap() {
 
   const c = argv._[0];
   argv.command = c;
-
+  console.log(argv);
   if (typeof argv.command != 'string') {
     Logger.error(' PLEASE ADD A COMMAND ');
     return app.close();

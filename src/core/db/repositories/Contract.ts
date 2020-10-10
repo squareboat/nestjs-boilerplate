@@ -117,6 +117,14 @@ export interface RepositoryContract {
   ): Promise<void>;
 
   /**
+   * Sync relation with a model
+   * @param model
+   * @param relation
+   * @param payload
+   */
+  sync(model, relation: string, payload): Promise<void>;
+
+  /**
    * Fetch a chunk and run callback
    */
   chunk(where: Record<string, any>, size: number, cb: Function): Promise<void>;
