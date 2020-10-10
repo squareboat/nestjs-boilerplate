@@ -111,8 +111,7 @@ export class DatabaseRepository implements RepositoryContract {
 
   /**
    * Update all models where condition is matched
-   * @param column
-   * @param value
+   * @param where
    * @param setValues
    */
   async updateWhere(
@@ -186,6 +185,25 @@ export class DatabaseRepository implements RepositoryContract {
    * @param payload
    */
   async attach(model, relation: string, payload): Promise<void> {
+    await model.$relatedQuery(relation).relate(payload);
+    return;
+  }
+
+  /**
+   * Sync relation with a model
+   * @param model
+   * @param relation
+   * @param payload
+   */
+  async sync(model, relation: string, payload): Promise<void> {
+    await model.$relatedQuery(relation).unrelate();
+    if (Array.isArray(payload)) {
+      for (const p of payload) {
+        await model.$relatedQuery(relation).relate(p);
+      }
+      return;
+    }
+
     await model.$relatedQuery(relation).relate(payload);
     return;
   }

@@ -5,5 +5,5 @@ export default registerAs('app', () => ({
   env: process.env.APP_ENV || 'local',
   debug: +process.env.APP_DEBUG || 1,
   url: process.env.APP_URL || 'localhost',
-  port: +process.env.APP_PORT || 3000,
+  port: +process.env.APP_PORT || 5000,
 }));

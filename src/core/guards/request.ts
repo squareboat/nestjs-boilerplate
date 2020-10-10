@@ -76,12 +76,18 @@ export class RequestGaurd implements CanActivate {
    */
   bindRequestHelpers(request: any): any {
     const all = function(): Record<string, any> {
-      return {
-        ...request.query,
-        ...request.body,
-        ...request.params,
-      };
+      const inputs = { ...request.query, ...request.body, ...request.params };
+
+      for (const key in inputs) {
+        const value = inputs[key];
+        if (typeof value === 'string' || value instanceof String) {
+          inputs[key] = value.trim();
+        }
+      }
+
+      return inputs;
     };
+
     request.all = all;
     return request;
   }
