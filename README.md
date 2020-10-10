@@ -6,7 +6,7 @@ A production 🏭 ready NestJS boilerplate with batteries 🔋 included. No Kidd
 
 ## Documentation
 
-To read our documentation, [click here](https://opensource.squareboat.com/nestjs-boilerplate/docs/).
+To read our documentation, [click here](https://opensource.squareboat.com/nestjs-boilerplate/).
 
 ---
 
