@@ -43,7 +43,7 @@
     "seed:make": "npm run knex seed:make -- -x ts"
   },
   "bin": {
-    "sample-command": "./dist/src/cli.js"
+    "nestjs-boilerplate": "./dist/src/cli.js"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
