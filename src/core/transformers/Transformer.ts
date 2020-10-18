@@ -1,4 +1,4 @@
-import { compact, concat, intersection, uniq, camelCase } from 'lodash';
+import { compact, concat, intersection, uniq, camelCase, set } from 'lodash';
 import { Context } from '../utils/Context';
 
 export abstract class Transformer {
@@ -79,11 +79,13 @@ export abstract class Transformer {
 
     // handle includes and nested includes
     for (const include of this.includes) {
-      const arr = await this.handleInclude(data, include);
-      if (!arr) {
+      const map = await this.handleInclude(data, include);
+      if (!map) {
         continue;
       }
-      result[arr[0]] = arr[1];
+      for(const key in map){
+        set(result, key, map[key])
+      }
     }
 
     return result;
@@ -92,23 +94,25 @@ export abstract class Transformer {
   async handleInclude(
     data: Record<string, any>,
     include: string,
-  ): Promise<Record<string, any>> {
+  ): Promise<Record<string, any>> {    
     // check if include contains nested includes also
-    const hasNestedIncludes = include.indexOf('.');
-    let parentInclude = include;
-    if (hasNestedIncludes >= 0) {
-      parentInclude = include.substr(0, include.indexOf('.'));
+    const includeMap ={}
+
+    const toInclude = include.split('.')
+    console.log(toInclude);
+    // for (const i of toInclude){
+    for(let i = 0; i < toInclude.length; i++){
+      let includeFunc;
+
+      const handler = camelCase('include ' + toInclude[i]);
+      if (this[handler]) {
+        includeFunc = this[handler](data, {
+          includes: include.substr(include.indexOf('.')).replace(/./g, ','),
+        });     
+      }
+      includeMap[toInclude.slice(0,i+1).join('.')] = await includeFunc
     }
 
-    const handler = camelCase('include ' + parentInclude);
-    if (!this[handler]) {
-      return undefined;
-    }
-
-    const result = this[handler](data, {
-      includes: include.substr(include.indexOf('.')).replace(/./g, ','),
-    });
-
-    return [parentInclude, await result];
+    return includeMap;
   }
 }
