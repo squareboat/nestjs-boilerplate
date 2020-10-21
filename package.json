@@ -23,6 +23,7 @@
     "setup": "npm link",
     "prebuild": "rimraf dist",
     "build": "nest build",
+    "postbuild": "npm link",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
