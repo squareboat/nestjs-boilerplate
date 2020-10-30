@@ -60,7 +60,7 @@ export abstract class Transformer {
   }
 
   parseIncludes(include = ''): this {
-    let includes = include.split(',');
+    let includes = include.split(/,(?=(((?!\]).)*\[)|[^\[\]]*$)/);
     const allIncludes = this.availableIncludes.concat(this.defaultIncludes);
     includes = intersection(includes, allIncludes);
     includes = uniq(concat(includes, this.defaultIncludes));
@@ -76,15 +76,13 @@ export abstract class Transformer {
     if (data instanceof Object) {
       result = await this.transform(data);
     }
-
     // handle includes and nested includes
     for (const include of this.includes) {
       const map = await this.handleInclude(data, include);
-      if (!map) {
-        continue;
-      }
-      for(const key in map){
-        set(result, key, map[key])
+      if (!map) continue;
+
+      for (const key in map) {
+        set(result, key, map[key]);
       }
     }
 
@@ -94,25 +92,83 @@ export abstract class Transformer {
   async handleInclude(
     data: Record<string, any>,
     include: string,
-  ): Promise<Record<string, any>> {    
+  ): Promise<Record<string, any>> {
     // check if include contains nested includes also
-    const includeMap ={}
+    const includeMap = {};
 
-    const toInclude = include.split('.')
-    console.log(toInclude);
-    // for (const i of toInclude){
-    for(let i = 0; i < toInclude.length; i++){
-      let includeFunc;
+    const toInclude = include.split(/\.(?![^[]*\])/);
+    await this.computeNestedInclude(toInclude, 0, includeMap, data, include);
 
-      const handler = camelCase('include ' + toInclude[i]);
-      if (this[handler]) {
-        includeFunc = this[handler](data, {
-          includes: include.substr(include.indexOf('.')).replace(/./g, ','),
-        });     
+    // same level includes
+    for (let i = 0; i < toInclude.length; i++) {
+      if (toInclude[i].charAt(0) === '[') {
+        toInclude[i] = toInclude[i].slice(1, -1);
+        const sameLvl = toInclude[i].split(',');
+        for (let j = 0; j < sameLvl.length; j++) {
+          if (sameLvl[j].split('.').length != 1) {
+            const nestMap = {};
+            const newArray = sameLvl[j].split('.');
+            await this.computeNestedInclude(
+              newArray,
+              0,
+              nestMap,
+              data,
+              include,
+            );
+            for (const key in nestMap) {
+              includeMap[toInclude.slice(0, i).join('.') + '.' + key] =
+                nestMap[key];
+            }
+            continue;
+          }
+
+          includeMap[
+            toInclude.slice(0, i).join('.') + '.' + sameLvl[j]
+          ] = await this.fetchData(sameLvl[j], data, include);
+        }
       }
-      includeMap[toInclude.slice(0,i+1).join('.')] = await includeFunc
     }
 
     return includeMap;
+  }
+
+  private async computeNestedInclude(
+    toInclude: string[],
+    i: number,
+    includeMap: Record<string, any>,
+    data: Record<string, any>,
+    include: string,
+  ) {
+    if (i === toInclude.length) return;
+
+    if (toInclude[i].charAt(0) != '[') {
+      includeMap[toInclude.slice(0, i + 1).join('.')] = await this.fetchData(
+        toInclude[i],
+        data,
+        include,
+      );
+      return this.computeNestedInclude(
+        toInclude,
+        i + 1,
+        includeMap,
+        data,
+        include,
+      );
+    }
+  }
+
+  private async fetchData(
+    name: string,
+    data: Record<string, any>,
+    include: string,
+  ): Promise<Record<string, any>> {
+    const handler = camelCase('include ' + name);
+    let includeFunc;
+    if (this[handler]) {
+      includeFunc = this[handler](data, {
+        includes: include.substr(include.indexOf('.')).replace(/./g, ','),
+      });
+    }
+    return await includeFunc;
   }
 }

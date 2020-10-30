@@ -1,7 +1,14 @@
 import { Transformer } from '@app/core';
 
 export class UserDetailTransformer extends Transformer {
-  availableIncludes = ['extra.address.address', 'extras'];
+  availableIncludes = [
+    'extra',
+    'address.extra',
+    'extra.[address,extra]',
+    'address.extra.[address,extra]',
+    'extra.address.[address,extra,pin]',
+    'extra.address.[extra,address.pin]',
+  ];
 
   async transform(user: Record<string, any>): Promise<Record<string, any>> {
     return {
@@ -17,10 +24,17 @@ export class UserDetailTransformer extends Transformer {
     });
   }
 
-  async includeAddress(user: Record<string, any>): Promise<Record<string, any>> {
+  async includeAddress(
+    user: Record<string, any>,
+  ): Promise<Record<string, any>> {
     return this.primitive({
       country: 'INDIA',
-      cityName : user.firstName
+      cityName: 'Delhi',
+    });
+  }
+  async includePin(user: Record<string, any>): Promise<Record<string, any>> {
+    return this.primitive({
+      code: '110045',
     });
   }
 }
