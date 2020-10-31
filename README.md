@@ -1,7 +1,6 @@
 <img src="./cover.jpg" align="center">
 
 <br />
-<br />
 
 <div align="center"><strong>Quickly start your Nestjs projects in seconds</strong></div>
 
@@ -25,22 +24,16 @@
 
 
 - *__Quick Setup__* - Quickly setup and configure your application. [See more](https://opensource.squareboat.com/nestjs-boilerplate/setup)
-<br>
 
 - *__Fully integrated ObjectionJS__* - Any applications requires database, so we have integrated ObjectionJS ([why?](https://opensource.squareboat.com/nestjs-boilerplate/database/introduction)) along with custom repositories and methods. [See more](https://opensource.squareboat.com/nestjs-boilerplate/database/introduction)
-<br>
 
 - *__Request & Response Helpers__* - Easy and elegant request and response helpers, so that you don't ever do tedious tasks. [See more](https://opensource.squareboat.com/nestjs-boilerplate/basics/request)
-<br>
 
 - *__Beautiful Response Transformers__* - Transform your response beautifully and cleanly. Dynamically transform response from API. [See more](https://opensource.squareboat.com/nestjs-boilerplate/basics/transformers)
-<br>
 
 - *__Custom Validators and Functions__* - With the help of custom validator functions, you can validate your incoming data with ease. [See more](https://opensource.squareboat.com/nestjs-boilerplate/basics/validation)
-<br>
 
 - *__Native support for console commands__* - Create your custom commands the way you like. Includes many helper functions to help you interact with cli easily. [See more](https://opensource.squareboat.com/nestjs-boilerplate/advanced/console)
-<br>
 
 - *__Elegant Event Listeners__* - Custom implementation of event listeners. Now, run your decoupled code beautifully without ever bothering of shaking the main code. [See more](https://opensource.squareboat.com/nestjs-boilerplate/advanced/events)
 
