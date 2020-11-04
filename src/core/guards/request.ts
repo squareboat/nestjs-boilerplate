@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { get, omit } from 'lodash';
 
 @Injectable()
-export class RequestGaurd implements CanActivate {
+export class RequestGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
