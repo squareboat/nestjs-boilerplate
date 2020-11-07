@@ -1,6 +1,6 @@
 {
   "name": "nestjs-boilerplate",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "A production ready NestJS boilerplate with batteries included. No Kidding!",
   "author": "Vinayak Sarawagi <vinayaksarawagi25@gmail.com>",
   "private": false,
@@ -44,7 +44,7 @@
     "seed:make": "npm run knex seed:make -- -x ts"
   },
   "bin": {
-    "sample-command": "./dist/src/cli.js"
+    "nestjs-boilerplate": "./dist/src/cli.js"
   },
   "dependencies": {
     "@nestjs/common": "^7.4.4",
