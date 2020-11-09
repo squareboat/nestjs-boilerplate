@@ -63,7 +63,7 @@ export abstract class Transformer {
     let includes = include.split(/,(?=(((?!\]).)*\[)|[^\[\]]*$)/);
     includes = compact(includes);
     const allIncludes = this.availableIncludes.concat(this.defaultIncludes);
-    const processedIncludes = [];
+    let processedIncludes = [];
     for (const include of includes) {
       const processed = uniq(compact(include.split(/[.,-_]/)));
       if (
@@ -73,6 +73,7 @@ export abstract class Transformer {
         processedIncludes.push(include);
       }
     }
+    processedIncludes = uniq(processedIncludes.concat(this.defaultIncludes));
     this.includes = processedIncludes;
     return this;
   }

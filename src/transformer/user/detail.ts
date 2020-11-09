@@ -1,7 +1,8 @@
 import { Transformer } from '@app/core';
 
 export class UserDetailTransformer extends Transformer {
-  availableIncludes = ['extra','address','pin'];
+  availableIncludes = ['extra', 'address', 'pin'];
+  defaultIncludes = ['pin'];
 
   async transform(user: Record<string, any>): Promise<Record<string, any>> {
     return {
