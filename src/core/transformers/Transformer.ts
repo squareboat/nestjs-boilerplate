@@ -1,4 +1,4 @@
-import { compact, concat, intersection, uniq, camelCase, set } from 'lodash';
+import { compact, difference, uniq, camelCase, set } from 'lodash';
 import { Context } from '../utils/Context';
 
 export abstract class Transformer {
@@ -61,11 +61,20 @@ export abstract class Transformer {
 
   parseIncludes(include = ''): this {
     let includes = include.split(/,(?=(((?!\]).)*\[)|[^\[\]]*$)/);
-    const allIncludes = this.availableIncludes.concat(this.defaultIncludes);
-    includes = intersection(includes, allIncludes);
-    includes = uniq(concat(includes, this.defaultIncludes));
     includes = compact(includes);
-    this.includes = includes;
+    const allIncludes = this.availableIncludes.concat(this.defaultIncludes);
+    let processedIncludes = [];
+    for (const include of includes) {
+      const processed = uniq(compact(include.split(/[.,-_]/)));
+      if (
+        difference(processed, allIncludes).length === 0 &&
+        processed.length != 0
+      ) {
+        processedIncludes.push(include);
+      }
+    }
+    processedIncludes = uniq(processedIncludes.concat(this.defaultIncludes));
+    this.includes = processedIncludes;
     return this;
   }
 
