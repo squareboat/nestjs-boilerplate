@@ -1,11 +1,11 @@
 import { QueryBuilder, Model, Page } from 'objection';
-import { isNotEmpty, } from '../helpers/Helpers';
+import { isNotEmpty } from '../helpers/Helpers';
 import { cloneDeep } from 'lodash';
 
 export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   M,
   R
-  > {
+> {
   ArrayQueryBuilderType!: CustomQueryBuilder<M, M[]>;
   SingleQueryBuilderType!: CustomQueryBuilder<M, M>;
   NumberQueryBuilderType!: CustomQueryBuilder<M, number>;

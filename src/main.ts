@@ -4,7 +4,7 @@ import { useContainer } from 'class-validator';
 import * as bodyParser from 'body-parser';
 import * as helmet from 'helmet';
 import * as rateLimit from 'express-rate-limit';
-import { RequestGaurd, ExceptionFilter, TimeoutInterceptor } from '@app/core';
+import { RequestGuard, ExceptionFilter, TimeoutInterceptor } from '@app/core';
 import { ConfigService } from '@nestjs/config';
 import { CanBeAuthenticated, UserModule, UserService } from '@app/user';
 
@@ -20,7 +20,7 @@ async function bootstrap() {
   app.use(rateLimit({ windowMs: 60, max: 50 }));
 
   // guards
-  app.useGlobalGuards(new RequestGaurd(),);
+  app.useGlobalGuards(new RequestGuard(),);
 
   // filters
   const { httpAdapter } = app.get(HttpAdapterHost);

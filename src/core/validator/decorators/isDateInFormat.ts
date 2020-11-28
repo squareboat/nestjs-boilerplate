@@ -11,7 +11,7 @@ import * as moment from 'moment';
 class IsDateInFormatConstraint implements ValidatorConstraintInterface {
   async validate(value: any | Array<any>, args: ValidationArguments) {
     const [format] = args.constraints;
-    return moment(value, format).isValid();
+    return moment(value, format, true).isValid();
   }
 
   defaultMessage(args: ValidationArguments) {
