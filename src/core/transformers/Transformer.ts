@@ -7,7 +7,7 @@ export abstract class Transformer {
   protected includes = [];
   ctx = new Context();
 
-  abstract async transform(object: any): Promise<Record<string, any> | null>;
+  abstract transform(object: any): Promise<Record<string, any> | null>;
 
   /**
    * Use this when
