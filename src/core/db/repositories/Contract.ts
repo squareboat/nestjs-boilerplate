@@ -4,7 +4,7 @@ export interface RepositoryContract {
   /**
    * Get all rows
    */
-  all(inputs?: Record<string, any>): Promise<Array<Record<string, any>> | []>;
+  all(inputs?: Record<string, any>): Promise<Array<Record<string, any>>>;
 
   /**
    * Get first instance with the matching criterias
