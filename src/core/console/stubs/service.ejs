@@ -1,0 +1,11 @@
+import { Injectable, Inject, HttpService } from '@nestjs/common';
+import { <%= className %>RepositoryContract } from '../repositories';
+import { <%= name %>_REPOSITORY } from '../constants';
+import { <%= className %>SignedUp } from '../events/<%= className %>SignedUp';
+
+@Injectable()
+export class <%= className %>Service {
+  constructor(
+    @Inject(<%= className %>_REPOSITORY) private <%= name %>s: <%= className %>RepositoryContract,
+  ) {}
+}

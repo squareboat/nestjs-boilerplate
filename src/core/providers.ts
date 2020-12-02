@@ -1,4 +1,8 @@
-import { ListCommands, InitApplicationSetup } from './console';
+import {
+  ListCommands,
+  InitApplicationSetup,
+  CreateTransformer,
+} from './console';
 import { EventExplorer } from './events';
 import { BaseValidator, ExistsConstraint } from './validator';
 import { IsUniqueConstraint } from './validator/decorators/isUnique';
@@ -8,6 +12,7 @@ const providers = [
   // commands
   ListCommands,
   InitApplicationSetup,
+  CreateTransformer,
 
   // event explore
   EventExplorer,
