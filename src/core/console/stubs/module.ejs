@@ -1,17 +1,15 @@
 import { Module } from '@nestjs/common';
 import { <%= className %>Controller } from './controllers';
 import { <%= className %>Service } from './services';
-import { USER_REPOSITORY } from './constants';
+import { <%= constantName %>_REPOSITORY } from './constants';
 import { <%= className %>Repository } from './repositories';
-import { GreetUser } from './commands';
 
 @Module({
   imports: [],
   controllers: [<%= className %>Controller],
   providers: [
     <%= className %>Service,
-    GreetUser,
-    { provide: USER_REPOSITORY, useClass: <%= className %>Repository },
+    { provide: <%= constantName %>_REPOSITORY, useClass: <%= className %>Repository },
   ],
 })
 export class <%= className %>Module {}

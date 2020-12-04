@@ -6,7 +6,6 @@ import { capitalize } from 'lodash';
 const { exec } = require('child_process');
 const ejs = require('ejs');
 const fs = require('fs');
-const rimraf = require('rimraf');
 const path = require('path');
 
 const rootPath = basePath();
@@ -17,30 +16,35 @@ const rootPath = basePath();
 })
 export class CreateTransformer extends BaseCommand {
   public async handle(): Promise<void> {
-    const name = await this.ask('Enter Transformer name:');
+    const that = this;
 
-    const contents = this.compileTemplate('transformer.ejs', {
+    const name = await this.ask('Enter Transformer name :');
+
+    const transformerStub = this.compileTemplate('transformer.ejs', {
       filename: capitalize(name),
     });
+
+    const indexStub = this.compileTemplate('index.ejs', {
+      filename: 'Detail',
+    });
+
     exec(`mkdir ${rootPath}src/transformer/${name}`, function (err) {
       if (err) {
         console.log('Folder creation err:' + err);
       } else {
-        fs.writeFile(
-          `${rootPath}src/transformer/${name}/Detail.ts`,
-          contents,
-          { flag: 'w', encoding: 'utf-8', recursive: true },
-          (err) => {
-            if (err) {
-              return console.error(
-                `Autsch! Failed to store template: ${err.message}.`,
-              );
-            }
-            console.log(`Saved template!`);
-          },
-        );
+        that.writeFile(`/transformer/${name}/Detail.ts`, transformerStub);
+        that.writeFile(`transformer/${name}/index.ts`, indexStub);
       }
     });
+
+    this.writeFile(
+      `/transformer/index.ts`,
+      '\r\n' +
+        this.compileTemplate('index.ejs', {
+          filename: name,
+        }),
+      'a',
+    );
   }
 
   private compileTemplate(template: string, payload: Record<string, any>): any {
@@ -52,6 +56,23 @@ export class CreateTransformer extends BaseCommand {
       payload,
     );
     return templateCompiler;
+  }
+
+  private writeFile(path, template, flag?) {
+    if (!flag) flag = 'w';
+    fs.writeFile(
+      `${rootPath}src/${path}`,
+      template,
+      { flag, encoding: 'utf-8', recursive: true },
+      (err) => {
+        if (err) {
+          return console.error(
+            `Autsch! Failed to store template: ${err.message}.`,
+          );
+        }
+        console.log(`✅ ${path}`);
+      },
+    );
   }
 
   public options(): Record<string, OptionInterface> {

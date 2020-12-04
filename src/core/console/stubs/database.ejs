@@ -1,13 +1,13 @@
-import { <%= className %> } from '../../models';
+import { <%= modelName %> } from '../../models';
 import { Injectable } from '@nestjs/common';
 import {
   DatabaseRepository as DB,
   InjectModel,
 } from '@app/core';
-import { <%= className %>RepositoryContract } from '../contracts';
+import { <%= modelName %>RepositoryContract } from '../contracts';
 
 @Injectable()
-export class <%= className %>Repository extends DB implements <%= className %>RepositoryContract {
-  @InjectModel(<%= className %>)
-  model: <%= className %>;
+export class <%= modelName %>Repository extends DB implements <%= modelName %>RepositoryContract {
+  @InjectModel(<%= modelName %>)
+  model: <%= modelName %>;
 }

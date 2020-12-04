@@ -1,6 +1,7 @@
 import {
   ListCommands,
   InitApplicationSetup,
+  CreateModule,
   CreateTransformer,
 } from './console';
 import { DatabaseRepository } from './db';
@@ -14,6 +15,7 @@ const providers = [
   ListCommands,
   InitApplicationSetup,
   CreateTransformer,
+  CreateModule,
 
   // event explore
   EventExplorer,
