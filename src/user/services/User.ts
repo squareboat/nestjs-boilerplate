@@ -3,15 +3,21 @@ import { UserRepositoryContract } from '../repositories';
 import { USER_REPOSITORY } from '../constants';
 import { EventListener } from '@app/core/events';
 import { UserSignedUp } from '../events/UserSignedUp';
+import { InjectRepository, RepositoryContract } from '@app/core';
+import { User } from '../models';
 
 @Injectable()
 export class UserService {
+  @InjectRepository(User) private repo: RepositoryContract;
+
   constructor(
     @Inject(USER_REPOSITORY) private users: UserRepositoryContract,
     private http: HttpService,
   ) {}
 
   async get(): Promise<Record<string, any>> {
+    console.log(this.users);
+    console.log(this.repo);
     return this.users.firstWhere({});
   }
 

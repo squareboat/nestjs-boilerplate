@@ -1,4 +1,5 @@
 import { ListCommands, InitApplicationSetup } from './console';
+import { DatabaseRepository } from './db';
 import { EventExplorer } from './events';
 import { BaseValidator, ExistsConstraint } from './validator';
 import { IsUniqueConstraint } from './validator/decorators/isUnique';
