@@ -7,10 +7,15 @@ import { CustomQueryBuilder } from '../QueryBuilder';
 export class DatabaseRepository implements RepositoryContract {
   model: any;
 
+  setModel(model: BaseModel): this {
+    this.model = model;
+    return this;
+  }
+
   /**
    * Get all rows
    */
-  async all(): Promise<Array<Record<string, any>> | []> {
+  async all(): Promise<Array<Record<string, any>>> {
     return await this.query();
   }
 
