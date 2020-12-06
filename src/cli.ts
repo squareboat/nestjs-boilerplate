@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import { NestFactory } from '@nestjs/core';
-import { BaseConsoleModule } from './consolemodule';
-import { BaseCommand, CommandMeta, Logger } from '@app/core';
 import * as yargs from 'yargs';
+import { AppModule } from './app';
+import { NestFactory } from '@nestjs/core';
+import { BaseCommand, CommandMeta, Logger } from '@app/core';
 
 async function bootstrap() {
-  const app = await NestFactory.createApplicationContext(BaseConsoleModule, {
+  const app = await NestFactory.createApplicationContext(AppModule, {
     logger: false,
   });
   const argv = yargs.argv;
@@ -16,13 +16,13 @@ async function bootstrap() {
 
   if (typeof argv.command != 'string') {
     Logger.error(' PLEASE ADD A COMMAND ');
-    return app.close();
+    return process.exit();
   }
 
   const target = CommandMeta.getTarget(argv.command);
   if (!target) {
     Logger.error(` ${argv.command} : command not found `);
-    return app.close();
+    return process.exit();
   }
 
   const command = app.get<BaseCommand>(target, { strict: false });
@@ -45,11 +45,12 @@ async function bootstrap() {
     } else {
       Logger.info('No option found for specified command');
     }
-    return app.close();
+
+    return process.exit();
   }
 
   await command.work();
-  await app.close();
+  return process.exit();
 }
 
 bootstrap();

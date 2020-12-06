@@ -28,7 +28,7 @@ export abstract class BaseCommand {
       if (!this.value(option)) noInputFound.push(option);
     }
     if (noInputFound.length) {
-      this.error(`'Missing arguments: ${noInputFound.join(', ')}`);
+      this.error(` Missing arguments: ${noInputFound.join(', ')} `);
       return false;
     }
 
