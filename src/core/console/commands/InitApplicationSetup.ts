@@ -9,19 +9,23 @@ const rootPath = basePath();
 const commands = [
   {
     title: 'Removing github templates',
-    cmd: `cd ${rootPath} && rm -rf .github`,
+    cmd: `rm -rf .github`,
   },
   {
     title: 'Removing other files',
-    cmd: `cd ${rootPath} && rm CODE_OF_CONDUCT.md CONTRIBUTING.md cover.jpg LICENSE.md README.md`,
+    cmd: `rm CODE_OF_CONDUCT.md CONTRIBUTING.md cover.jpg LICENSE.md README.md`,
   },
   {
     title: 'Cleaning git commits for you',
-    cmd: `cd ${rootPath} && rm -rf .git`,
+    cmd: `rm -rf .git`,
   },
   {
     title: 'Copying .env.example to .env',
-    cmd: `cd ${rootPath} && cp .env.example .env`,
+    cmd: `cp .env.example .env`,
+  },
+  {
+    title: 'Initializing Git Repo',
+    cmd: 'git init',
   },
 ];
 
@@ -35,7 +39,7 @@ export class InitApplicationSetup extends BaseCommand {
 
     for (const command of commands) {
       this.info(`✅ ${command.title}`, 'white');
-      // exec(command.cmd);
+      exec(command.cmd);
     }
 
     this.info('\n🥳 Setup Finish!\n');
