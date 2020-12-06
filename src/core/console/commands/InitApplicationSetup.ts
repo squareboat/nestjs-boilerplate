@@ -23,7 +23,10 @@ const commands = [
     title: 'Copying .env.example to .env',
     cmd: `cd ${rootPath} && cp .env.example .env`,
   },
-  { title: 'Initializing Git Repo', cmd: `cd ${rootPath} && git init` },
+  {
+    title: 'Initializing Git Repo',
+    cmd: `cd ${rootPath} && git init`,
+  },
 ];
 
 @Injectable()
