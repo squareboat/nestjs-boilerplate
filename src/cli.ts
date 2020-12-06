@@ -3,7 +3,7 @@
 import * as yargs from 'yargs';
 import { AppModule } from './app';
 import { NestFactory } from '@nestjs/core';
-import { BaseCommand, CommandMeta, Logger } from '@app/core';
+import { BaseCommand, CommandMeta, Logger } from '@libs/core';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule, {

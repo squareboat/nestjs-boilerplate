@@ -1,7 +1,7 @@
 import { BaseCommand, OptionInterface } from '../BaseCommand';
 import { Command } from '../Decorators';
 import { Injectable } from '@nestjs/common';
-import { basePath } from '@app/core/helpers';
+import { basePath } from '@libs/core/helpers';
 const { exec } = require('child_process');
 const rimraf = require('rimraf');
 

@@ -1,3 +1,3 @@
-import { RepositoryContract } from '@app/core';
+import { RepositoryContract } from '@libs/core';
 
-export type UserRepositoryContract = RepositoryContract
+export type UserRepositoryContract = RepositoryContract;

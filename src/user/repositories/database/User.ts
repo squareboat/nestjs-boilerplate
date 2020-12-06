@@ -1,6 +1,6 @@
 import { User } from '../../models';
 import { Injectable } from '@nestjs/common';
-import { DatabaseRepository as DB, InjectModel } from '@app/core';
+import { DatabaseRepository as DB, InjectModel } from '@libs/core';
 import { UserRepositoryContract } from '../contracts';
 
 @Injectable()

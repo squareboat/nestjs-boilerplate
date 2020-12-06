@@ -1,4 +1,4 @@
-import { ApiController, Request, Response } from '@app/core';
+import { ApiController, Request, Response } from '@libs/core';
 import { Controller, Get, Req, Res } from '@nestjs/common';
 import { UserService } from '../services';
 import { UserDetailTransformer } from '@app/transformer';
@@ -15,6 +15,8 @@ export class UserController extends ApiController {
     @Res() res: Response,
   ): Promise<Response> {
     const user = await this.users.get();
-    return res.success(await this.transform(user, new UserDetailTransformer, { req }));
+    return res.success(
+      await this.transform(user, new UserDetailTransformer(), { req }),
+    );
   }
 }
