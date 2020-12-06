@@ -4,7 +4,7 @@ import { useContainer } from 'class-validator';
 import * as bodyParser from 'body-parser';
 import * as helmet from 'helmet';
 import * as rateLimit from 'express-rate-limit';
-import { RequestGuard, ExceptionFilter, TimeoutInterceptor } from '@app/core';
+import { RequestGuard, ExceptionFilter, TimeoutInterceptor } from '@libs/core';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {

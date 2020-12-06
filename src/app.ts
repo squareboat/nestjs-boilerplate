@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { EventModule } from '@squareboat/nest-events';
-import { CoreModule } from './core';
 import { UserModule } from './user';
 import { DbModule } from './_db';
 import config from '@config/index';
+import { CoreModule } from '@libs/core';
 
 @Module({
   imports: [

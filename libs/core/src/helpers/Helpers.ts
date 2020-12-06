@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as queryString from 'query-string';
 import * as path from 'path';
 import { HttpException } from '@nestjs/common';
+import { HttpMetadata } from '../http';
 
 export function uuid() {
   return uuidv4();
@@ -30,10 +31,7 @@ export function randomNumber(n: number): string {
  * Helper to generate random string
  */
 export function randomString(length = 0) {
-  if (!length)
-    return Math.random()
-      .toString(36)
-      .substr(2);
+  if (!length) return Math.random().toString(36).substr(2);
 
   let str = '';
   while (length > 0) {
@@ -198,7 +196,7 @@ export function except(
  * Clone class instance
  */
 export function clone<T>(instance: T): T {
-  const copy = new (instance.constructor as { new(): T })();
+  const copy = new (instance.constructor as { new (): T })();
   Object.assign(copy, instance);
   return copy;
 }
@@ -211,7 +209,7 @@ export function groupBy(
   key: string,
 ): Record<string, any> {
   const obj = {};
-  arr.forEach(o => {
+  arr.forEach((o) => {
     obj[o[key]] = o;
   });
 
@@ -249,4 +247,8 @@ export function invertObj(obj: Record<string, any>): Record<string, any> {
     }
   }
   return newObj;
+}
+
+export function route(name: string, params?: Object): string {
+  return HttpMetadata.getRoute(name, params);
 }

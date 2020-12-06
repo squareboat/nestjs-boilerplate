@@ -8,12 +8,12 @@ import {
 import { Injectable, Inject } from '@nestjs/common';
 import { KNEX_CONNECTION } from '../../constants';
 import Knex = require('knex');
-import { isEmpty } from '@app/core/helpers/Helpers';
+import { isEmpty } from '@libs/core/helpers/Helpers';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
 export class ExistsConstraint implements ValidatorConstraintInterface {
-  constructor(@Inject(KNEX_CONNECTION) private connection: Knex) { }
+  constructor(@Inject(KNEX_CONNECTION) private connection: Knex) {}
 
   public async validate(
     value: string | string[],
@@ -25,7 +25,7 @@ export class ExistsConstraint implements ValidatorConstraintInterface {
 
     if (caseInsensitive) {
       value = Array.isArray(value)
-        ? value.map(v => v.toLowerCase())
+        ? value.map((v) => v.toLowerCase())
         : value.toLowerCase();
     }
 

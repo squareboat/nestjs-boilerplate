@@ -1,4 +1,4 @@
-import { BaseCommand, Command, OptionInterface } from '@app/core';
+import { BaseCommand, Command, OptionInterface } from '@libs/core';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
