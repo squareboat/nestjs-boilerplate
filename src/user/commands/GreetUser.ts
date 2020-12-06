@@ -27,7 +27,7 @@ export class GreetUser extends BaseCommand {
     return {
       name: {
         desc: 'Name of the person to be greeted!',
-        req: true,
+        req: false,
       },
     };
   }

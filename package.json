@@ -20,10 +20,8 @@
   },
   "homepage": "https://github.com/squareboat/nestjs-boilerplate",
   "scripts": {
-    "setup": "npm link",
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "postbuild": "npm link",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -43,14 +41,12 @@
     "seed:run": "npm run knex seed:run",
     "seed:make": "npm run knex seed:make -- -x ts"
   },
-  "bin": {
-    "nestjs-boilerplate": "./dist/src/cli.js"
-  },
   "dependencies": {
     "@nestjs/common": "^7.5.5",
     "@nestjs/config": "^0.6.0",
     "@nestjs/core": "^7.5.5",
     "@nestjs/platform-express": "^7.5.5",
+    "@squareboat/nest-events": "0.0.5",
     "chalk": "^4.1.0",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
