@@ -13,20 +13,17 @@ const commands = [
   },
   {
     title: 'Removing other files',
-    cmd: `rm CODE_OF_CONDUCT.md CONTRIBUTING.md cover.jpg LICENSE.md README.md`,
+    cmd: `cd ${rootPath} && rm CODE_OF_CONDUCT.md CONTRIBUTING.md cover.jpg LICENSE.md README.md`,
   },
   {
     title: 'Cleaning git commits for you',
-    cmd: `rm -rf .git`,
+    cmd: `cd ${rootPath} && rm -rf .git`,
   },
   {
     title: 'Copying .env.example to .env',
-    cmd: `cp .env.example .env`,
+    cmd: `cd ${rootPath} && cp .env.example .env`,
   },
-  {
-    title: 'Initializing Git Repo',
-    cmd: 'git init',
-  },
+  { title: 'Initializing Git Repo', cmd: `cd ${rootPath} && git init` },
 ];
 
 @Injectable()
