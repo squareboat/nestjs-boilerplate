@@ -1,4 +1,9 @@
-import { ListCommands, InitApplicationSetup } from './console';
+import {
+  ListCommands,
+  InitApplicationSetup,
+  CreateModule,
+  CreateTransformer,
+} from './console';
 import { HttpExplorer } from './http';
 import { BaseValidator, ExistsConstraint } from './validator';
 import { IsUniqueConstraint } from './validator/decorators/isUnique';
@@ -8,6 +13,8 @@ const providers = [
   // commands
   ListCommands,
   InitApplicationSetup,
+  CreateModule,
+  CreateTransformer,
 
   // custom base validator
   BaseValidator,

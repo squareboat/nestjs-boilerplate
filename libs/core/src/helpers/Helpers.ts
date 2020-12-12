@@ -75,7 +75,7 @@ export function stringifyQueryParams(params = {}) {
  * Get Project Base Path.
  */
 export function basePath() {
-  return path.join(__dirname, '../../../../');
+  return path.join(__dirname, '../../../../../');
 }
 
 /**

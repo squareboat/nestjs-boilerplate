@@ -1,0 +1,10 @@
+import { Transformer } from '@libs/core';
+
+export class <%= filename %>Transformer extends Transformer {
+  availableIncludes = [];
+  defaultIncludes = [];
+
+  async transform(obj: Record<string, any>):  Promise<Record<string, any>>{
+    return {};
+  }
+}
