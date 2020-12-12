@@ -12,7 +12,7 @@ const exec = util.promisify(require('child_process').exec);
 const rootPath = basePath();
 const commands = (name) => [
   {
-    title: 'Creating Module.... 🚀 ',
+    title: '\nCreating Module.... 🚀 ',
     cmd: `mkdir ${rootPath}src/${name}s`,
     postcmd: async (that, name) => {
       await that.writeFile(
@@ -37,7 +37,7 @@ const commands = (name) => [
     },
   },
   {
-    title: 'Creating Controllers.... 🚀 ',
+    title: '\nCreating Controllers.... 🚀 ',
     cmd: `mkdir ${rootPath}src/${name}s/controllers`,
     postcmd: async (that, name) => {
       await that.writeFile(
@@ -56,7 +56,7 @@ const commands = (name) => [
     },
   },
   {
-    title: 'Creating Service... 🚀 ',
+    title: '\nCreating Service... 🚀 ',
     cmd: `mkdir ${rootPath}src/${name}s/services`,
     postcmd: async (that, name) => {
       await that.writeFile(
@@ -76,7 +76,7 @@ const commands = (name) => [
     },
   },
   {
-    title: 'Creating Models... 🚀 ',
+    title: '\nCreating Models... 🚀 ',
     cmd: `mkdir ${rootPath}src/${name}s/models`,
     postcmd: async (that, name) => {
       await that.writeFile(
@@ -96,7 +96,7 @@ const commands = (name) => [
     },
   },
   {
-    title: 'Creating repositories... 🚀 ',
+    title: '\nCreating repositories... 🚀 ',
     cmd: `mkdir ${rootPath}src/${name}s/repositories`,
     postcmd: async (that, name) => {
       await that.writeFile(
@@ -115,7 +115,7 @@ const commands = (name) => [
     },
   },
   {
-    title: 'Creating Databases... 🚀 ',
+    title: '\nCreating Databases... 🚀 ',
     cmd: `mkdir ${rootPath}src/${name}s/repositories/databases`,
     postcmd: async (that, name) => {
       await that.writeFile(
@@ -133,7 +133,7 @@ const commands = (name) => [
     },
   },
   {
-    title: 'Creating Contracts... 🚀 ',
+    title: '\nCreating Contracts... 🚀 ',
     cmd: `mkdir ${rootPath}src/${name}s/repositories/contracts`,
     postcmd: async (that, name) => {
       await that.writeFile(
