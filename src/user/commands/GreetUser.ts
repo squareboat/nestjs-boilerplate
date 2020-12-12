@@ -1,4 +1,4 @@
-import { BaseCommand, Command, OptionInterface } from '@app/core';
+import { BaseCommand, Command, OptionInterface } from '@libs/core';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class GreetUser extends BaseCommand {
     return {
       name: {
         desc: 'Name of the person to be greeted!',
-        req: true,
+        req: false,
       },
     };
   }
