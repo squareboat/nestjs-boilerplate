@@ -1,5 +1,5 @@
 import { registerAs } from '@nestjs/config';
-import { basePath } from '@app/core';
+import { basePath } from '@libs/core';
 
 export default registerAs('db', () => ({
   type: process.env.DB_TYPE || 'mysql2',

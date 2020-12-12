@@ -20,11 +20,9 @@
   },
   "homepage": "https://github.com/squareboat/nestjs-boilerplate",
   "scripts": {
-    "setup": "npm link",
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "postbuild": "npm link",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -43,14 +41,12 @@
     "seed:run": "npm run knex seed:run",
     "seed:make": "npm run knex seed:make -- -x ts"
   },
-  "bin": {
-    "nestjs-boilerplate": "./dist/src/cli.js"
-  },
   "dependencies": {
     "@nestjs/common": "^7.5.5",
     "@nestjs/config": "^0.6.0",
     "@nestjs/core": "^7.5.5",
     "@nestjs/platform-express": "^7.5.5",
+    "@squareboat/nest-events": "0.0.5",
     "chalk": "^4.1.0",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
@@ -68,7 +64,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
     "uuid": "^8.3.1",
-    "yargs": "^16.1.1"
+    "yargs": "^16.2.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.3",
@@ -76,19 +72,19 @@
     "@nestjs/testing": "^7.5.5",
     "@types/chalk": "^2.2.0",
     "@types/express": "^4.17.9",
-    "@types/jest": "^26.0.15",
+    "@types/jest": "^26.0.16",
     "@types/node": "^14.14.10",
     "@types/supertest": "^2.0.8",
-    "@types/yargs": "^15.0.10",
-    "@typescript-eslint/eslint-plugin": "^4.8.2",
-    "@typescript-eslint/parser": "^4.8.2",
-    "eslint-config-prettier": "^6.15.0",
+    "@types/yargs": "^15.0.11",
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
+    "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-import": "^2.22.1",
     "prettier": "^2.2.1",
     "supertest": "^6.0.1",
     "ts-jest": "^26.4.4",
     "ts-loader": "^8.0.11",
-    "ts-node": "^9.0.0",
+    "ts-node": "^9.1.0",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.1.2"
   },
@@ -98,12 +94,20 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": ".",
     "testRegex": ".spec.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "coverageDirectory": "./coverage",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/src/",
+      "<rootDir>/libs/"
+    ],
+    "moduleNameMapper": {
+      "@libs/core/(.*)": "<rootDir>/libs/core/src/$1",
+      "@libs/core": "<rootDir>/libs/core/src"
+    }
   }
 }

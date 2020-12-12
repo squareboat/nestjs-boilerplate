@@ -1,6 +1,6 @@
 import { Injectable, ExecutionContext } from '@nestjs/common';
 import { AuthenticateUser } from './AuthenticateUser';
-import { Unauthorized } from '@app/core';
+import { Unauthorized } from '@libs/core';
 
 /**
  * Mandatory Authentication Guard.

@@ -1,7 +1,7 @@
 import { BaseCommand, OptionInterface } from '../BaseCommand';
 import { Command } from '../Decorators';
 import { Injectable } from '@nestjs/common';
-import { basePath } from '@app/core/helpers';
+import { basePath } from '@libs/core/helpers';
 const { exec } = require('child_process');
 const rimraf = require('rimraf');
 
@@ -9,7 +9,7 @@ const rootPath = basePath();
 const commands = [
   {
     title: 'Removing github templates',
-    cmd: `cd ${rootPath} && rm -rf .github`,
+    cmd: `rm -rf .github`,
   },
   {
     title: 'Removing other files',
@@ -23,6 +23,10 @@ const commands = [
     title: 'Copying .env.example to .env',
     cmd: `cd ${rootPath} && cp .env.example .env`,
   },
+  {
+    title: 'Initializing Git Repo',
+    cmd: `cd ${rootPath} && git init`,
+  },
 ];
 
 @Injectable()
@@ -35,7 +39,7 @@ export class InitApplicationSetup extends BaseCommand {
 
     for (const command of commands) {
       this.info(`✅ ${command.title}`, 'white');
-      // exec(command.cmd);
+      exec(command.cmd);
     }
 
     this.info('\n🥳 Setup Finish!\n');
