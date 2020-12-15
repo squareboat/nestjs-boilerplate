@@ -1,0 +1,10 @@
+import { ApiController, Request, Response } from '@libs/core';
+import { Controller, Get, Req, Res } from '@nestjs/common';
+import { <%= className %>Service } from '../services';
+
+@Controller('<%= name %>s')
+export class <%= className %>Controller extends ApiController {
+  constructor(private <%= name %>s: <%= className %>Service) {
+    super();
+  }
+}
