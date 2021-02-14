@@ -46,7 +46,7 @@
     "@nestjs/config": "^0.6.3",
     "@nestjs/core": "^7.6.12",
     "@nestjs/platform-express": "^7.6.12",
-    "@squareboat/nest-console": "0.0.3",
+    "@squareboat/nest-console": "0.0.4",
     "@squareboat/nest-events": "0.0.5",
     "class-transformer": "^0.3.2",
     "class-validator": "^0.13.1",
