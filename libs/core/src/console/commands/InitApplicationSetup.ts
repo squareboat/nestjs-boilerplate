@@ -1,9 +1,7 @@
-import { BaseCommand, OptionInterface } from '../BaseCommand';
-import { Command } from '../Decorators';
 import { Injectable } from '@nestjs/common';
 import { basePath } from '@libs/core/helpers';
+import { Command, _cli } from '@squareboat/nest-console';
 const { exec } = require('child_process');
-const rimraf = require('rimraf');
 
 const rootPath = basePath();
 const commands = [
@@ -33,20 +31,16 @@ const commands = [
 @Command('init', {
   desc: 'Command to setup the project. Compatible for linux and mac only!',
 })
-export class InitApplicationSetup extends BaseCommand {
-  public async handle(): Promise<void> {
-    this.info('🚀 Starting Setup... \n');
+export class InitApplicationSetup {
+  public async handle(args: Record<string, any>): Promise<void> {
+    _cli.info('🚀 Starting Setup... \n');
 
     for (const command of commands) {
-      this.info(`✅ ${command.title}`, 'white');
+      _cli.info(`✅ ${command.title}`, 'white');
       exec(command.cmd);
     }
 
-    this.info('\n🥳 Setup Finish!\n');
-    this.success('⚡ You are all set now! Do amazing things!');
-  }
-
-  public options(): Record<string, OptionInterface> {
-    return {};
+    _cli.info('\n🥳 Setup Finish!\n');
+    _cli.success('⚡ You are all set now! Do amazing things!');
   }
 }

@@ -1,4 +1,4 @@
-import { ListCommands, InitApplicationSetup } from './console';
+import { InitApplicationSetup } from './console/commands';
 import { HttpExplorer } from './http';
 import { BaseValidator, ExistsConstraint } from './validator';
 import { IsUniqueConstraint } from './validator/decorators/isUnique';
@@ -6,7 +6,6 @@ import { IsValueFromConfigConstraint } from './validator/decorators/isValueFromC
 
 const providers = [
   // commands
-  ListCommands,
   InitApplicationSetup,
 
   // custom base validator

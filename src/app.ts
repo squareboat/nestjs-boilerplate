@@ -5,6 +5,7 @@ import { UserModule } from './user';
 import { DbModule } from './_db';
 import config from '@config/index';
 import { CoreModule } from '@libs/core';
+import { ConsoleModule } from '@squareboat/nest-console';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CoreModule } from '@libs/core';
     CoreModule,
     UserModule,
     EventModule,
+    ConsoleModule,
     ConfigModule.forRoot({
       isGlobal: true,
       expandVariables: true,

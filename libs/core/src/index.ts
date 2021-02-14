@@ -8,4 +8,3 @@ export * from './helpers';
 export * from './http';
 export * from './db';
 export * from './constants';
-export * from './console';
