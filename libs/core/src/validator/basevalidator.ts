@@ -1,14 +1,16 @@
 import { startCase, isEmpty } from 'lodash';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 import { ValidationFailed } from '../exceptions';
 
 @Injectable()
 export class BaseValidator {
-  async fire(inputs, schemaMeta): Promise<Record<string, any>> {
-    const schema = plainToClass(schemaMeta, inputs);
-    const errors = await validate(schema);
+  async fire<T>(inputs: Record<string, any>, schemaMeta: Type<T>): Promise<T> {
+    const schema: T = plainToClass(schemaMeta, inputs);
+    const errors = await validate(schema as Record<string, any>, {
+      stopAtFirstError: true,
+    });
 
     /**
      * Process errors, if any.
@@ -25,16 +27,13 @@ export class BaseValidator {
           }
         }
 
-        bag = {
-          ...bag,
-          ...childErrorBag,
-        };
+        bag = { ...bag, ...childErrorBag };
       }
 
       throw new ValidationFailed(bag);
     }
 
-    return inputs;
+    return schema;
   }
 
   parseError(error) {

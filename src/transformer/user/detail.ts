@@ -13,22 +13,16 @@ export class UserDetailTransformer extends Transformer {
   }
 
   async includeExtra(user: Record<string, any>): Promise<Record<string, any>> {
-    return this.primitive({
-      username: user.username,
-    });
+    return { username: user.username };
   }
 
   async includeAddress(
     user: Record<string, any>,
   ): Promise<Record<string, any>> {
-    return this.primitive({
-      country: 'INDIA',
-      cityName: 'Delhi',
-    });
+    return { country: 'INDIA', cityName: 'Gurugram' };
   }
+
   async includePin(user: Record<string, any>): Promise<Record<string, any>> {
-    return this.primitive({
-      code: '110010',
-    });
+    return { code: '122002' };
   }
 }

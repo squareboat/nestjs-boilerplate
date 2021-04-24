@@ -37,7 +37,7 @@ export class IsUniqueConstraint implements ValidatorConstraintInterface {
     if (where) query.where(where);
 
     const result = await query.count({ count: '*' });
-    const record = result.first() || {};
+    const record = result[0] || {};
     const count = +record['count'];
     return Array.isArray(value) ? !!!(value.length === count) : !!!count;
   }

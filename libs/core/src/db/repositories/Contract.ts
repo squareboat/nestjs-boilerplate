@@ -11,10 +11,10 @@ export interface RepositoryContract {
    * @param inputs
    * @param error
    */
-  firstWhere(
+  firstWhere<T>(
     inputs: Record<string, any>,
     error?: boolean,
-  ): Promise<Record<string, any> | null>;
+  ): Promise<T | null>;
 
   /**
    * Get all instances with the matching criterias
@@ -30,7 +30,7 @@ export interface RepositoryContract {
    * Create a new model with given inputs
    * @param inputs
    */
-  create(inputs: Record<string, any>): Promise<Record<string, any>>;
+  create<T>(inputs: Record<string, any>): Promise<T>;
 
   /**
    * Update or Create model with given condition and values

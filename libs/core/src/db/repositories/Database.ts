@@ -1,8 +1,8 @@
-import { isEmpty } from '../../helpers/Helpers';
-import { RepositoryContract } from './Contract';
+import { RepositoryContract } from './contract';
+import { BaseModel } from '../baseModel';
+import { CustomQueryBuilder } from '../queryBuilder';
+import { isEmpty } from 'lodash';
 import { ModelNotFoundException } from '../../exceptions';
-import { BaseModel } from '../BaseModel';
-import { CustomQueryBuilder } from '../QueryBuilder';
 
 export class DatabaseRepository implements RepositoryContract {
   model: any;
@@ -24,10 +24,10 @@ export class DatabaseRepository implements RepositoryContract {
    * @param inputs
    * @param error
    */
-  async firstWhere(
+  async firstWhere<T>(
     inputs?: Record<string, any>,
     error = true,
-  ): Promise<Record<string, any> | null> {
+  ): Promise<T | null> {
     inputs = inputs || {};
     const query = this.query();
     const model = await query.findOne(inputs);
@@ -63,8 +63,8 @@ export class DatabaseRepository implements RepositoryContract {
    * Create a new model with given inputs
    * @param inputs
    */
-  async create(inputs: Record<string, any>): Promise<Record<string, any>> {
-    return await this.query().insertAndFetch(inputs);
+  async create<T>(inputs: Record<string, any>): Promise<T> {
+    return (this.query().insert(inputs).returning('*') as unknown) as T;
   }
 
   /**
@@ -200,15 +200,8 @@ export class DatabaseRepository implements RepositoryContract {
    * @param relation
    * @param payload
    */
-  async sync(model, relation: string, payload): Promise<void> {
+  async sync(model: BaseModel, relation: string, payload): Promise<void> {
     await model.$relatedQuery(relation).unrelate();
-    if (Array.isArray(payload)) {
-      for (const p of payload) {
-        await model.$relatedQuery(relation).relate(p);
-      }
-      return;
-    }
-
     await model.$relatedQuery(relation).relate(payload);
     return;
   }

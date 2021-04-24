@@ -1,1 +1,1 @@
-export * from './Transformer';
+export * from './transformer';

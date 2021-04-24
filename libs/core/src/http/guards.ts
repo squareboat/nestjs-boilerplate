@@ -19,7 +19,7 @@ export class RequestGuard implements CanActivate {
    * @param response
    */
   bindResponseHelpers(response: any): any {
-    const success = function(
+    const success = function (
       data: Record<string, any> | Array<any> | string,
       status = 200,
     ) {
@@ -30,7 +30,7 @@ export class RequestGuard implements CanActivate {
       });
     };
 
-    const error = function(error: Record<string, any> | string, status = 401) {
+    const error = function (error: Record<string, any> | string, status = 401) {
       let message = 'Something went wrong!';
       let errors = null;
       if (error instanceof Object) {
@@ -48,11 +48,11 @@ export class RequestGuard implements CanActivate {
       });
     };
 
-    const noContent = function() {
+    const noContent = function () {
       return response.status(204).end();
     };
 
-    const withMeta = function(data: Record<string, any>, status = 200) {
+    const withMeta = function (data: Record<string, any>, status = 200) {
       return response.status(status).json({
         success: true,
         code: status,
@@ -75,7 +75,7 @@ export class RequestGuard implements CanActivate {
    * @param request
    */
   bindRequestHelpers(request: any): any {
-    const all = function(): Record<string, any> {
+    const all = function (): Record<string, any> {
       const inputs = { ...request.query, ...request.body, ...request.params };
 
       for (const key in inputs) {
