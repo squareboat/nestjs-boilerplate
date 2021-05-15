@@ -42,7 +42,7 @@
 To read the complete documentation, [click here](https://squareboat.com/open-source/nestjs-boilerplate/).
 
 ## Contributing
-To know about contributing to this boilerplate, read the guidelines [here](./CONTRIBUTING.MD)
+To know about contributing to this boilerplate, read the guidelines [here](./CONTRIBUTING.md)
 
 
 ## About Us
