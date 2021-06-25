@@ -8,7 +8,7 @@ export function InjectModel(model: any): Function {
     );
   }
 
-  return function (target: RepositoryContract, key: string | symbol) {
+  return function (target: Function, key: string | symbol) {
     Object.assign(target, {
       [key]: model,
     });
