@@ -3,7 +3,6 @@ import { Injectable, Inject, HttpService } from '@nestjs/common';
 import { UserRepositoryContract } from '../repositories';
 import { ListensTo } from '@squareboat/nest-events';
 import { UserSignedUp } from '../events/userSignedUp';
-import { User } from '../models';
 
 @Injectable()
 export class UserService {

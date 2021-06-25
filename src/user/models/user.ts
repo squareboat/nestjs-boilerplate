@@ -1,5 +1,5 @@
 import { BaseModel } from '@libs/core';
 
-export class User extends BaseModel {
+export class UserModel extends BaseModel {
   static tableName = 'users';
 }
