@@ -1,4 +1,3 @@
-import { RepositoryContract } from './repositories/Contract';
 import { BaseModel } from './baseModel';
 
 export function InjectModel(model: any): Function {
