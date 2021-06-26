@@ -1,4 +1,4 @@
-import * as Knex from 'knex';
+import Knex = require('knex');
 import { timestamps } from '../helpers';
 
 export async function up(knex: Knex): Promise<void> {

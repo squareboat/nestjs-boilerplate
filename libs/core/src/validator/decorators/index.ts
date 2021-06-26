@@ -1,8 +1,6 @@
-import { IsUnique } from './isUnique';
-import { IsEqualToProp } from './IsEqualToProp';
-import { IsValueFromConfig } from './isValueFromConfig';
-import { ValueIn } from './valueIn';
+export * from './valueIn';
 export * from './isDateInFormat';
 export * from './exists';
-
-export { IsUnique, IsEqualToProp, IsValueFromConfig, ValueIn };
+export * from './isUnique';
+export * from './isValueFromConfig';
+export * from './isEqualToProp';
