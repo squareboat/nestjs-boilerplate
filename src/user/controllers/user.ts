@@ -1,10 +1,10 @@
-import { ApiController, Request, Response, WithAlias } from '@libs/core';
+import { Request, Response, RestController, WithAlias } from '@libs/core';
 import { Controller, Get, Req, Res } from '@nestjs/common';
 import { UserService } from '../services';
 import { UserDetailTransformer } from '@app/transformer';
 
 @Controller('users')
-export class UserController extends ApiController {
+export class UserController extends RestController {
   constructor(private users: UserService) {
     super();
   }

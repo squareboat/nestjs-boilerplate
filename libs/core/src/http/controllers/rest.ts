@@ -1,7 +1,7 @@
 import { get } from 'lodash';
-import { Transformer } from '../transformers';
+import { Transformer } from '../../transformers';
 
-export class ApiController {
+export class RestController {
   /**
    * Transform a object
    *

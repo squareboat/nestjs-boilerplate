@@ -7,8 +7,8 @@ import {
 } from 'class-validator';
 import { Injectable, Inject } from '@nestjs/common';
 import { KNEX_CONNECTION } from '../../constants';
-import Knex = require('knex');
-import { isEmpty } from '@libs/core/helpers/Helpers';
+import * as Knex from 'knex';
+import { isEmpty } from 'lodash';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
@@ -37,7 +37,7 @@ export class ExistsConstraint implements ValidatorConstraintInterface {
     if (where) query.where(where);
 
     const result = await query.count({ count: '*' });
-    const record = result.first() || {};
+    const record = result[0] || {};
     const count = +record['count'];
     return Array.isArray(value) ? value.length === count : !!count;
   }

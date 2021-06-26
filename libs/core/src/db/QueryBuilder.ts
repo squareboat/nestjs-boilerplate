@@ -1,6 +1,6 @@
-import { QueryBuilder, Model, Page } from 'objection';
-import { isNotEmpty } from '../helpers/Helpers';
-import { cloneDeep } from 'lodash';
+import { QueryBuilder, Model, Page, OrderByDirection } from 'objection';
+import { cloneDeep, isEmpty } from 'lodash';
+import { Pagination } from './interfaces';
 
 export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   M,
@@ -11,7 +11,7 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   NumberQueryBuilderType!: CustomQueryBuilder<M, number>;
   PageQueryBuilderType!: CustomQueryBuilder<M, Page<M>>;
 
-  async paginate(page: number, perPage: number) {
+  async paginate<T>(page: number, perPage: number): Promise<Pagination<T>> {
     page = +page ? +page : 1;
     perPage = +perPage ? +perPage : 15;
 
@@ -23,13 +23,17 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
         perPage,
         total: result.total,
       },
-      data: result.results,
+      data: (result.results as unknown) as T[],
     };
+  }
+
+  async allPages<T>(): Promise<Pagination<T>> {
+    return { data: ((await this) as unknown) as T[] };
   }
 
   async onlyCount() {
     const result = await this.count({ c: '*' });
-    return result[0].c;
+    return +result[0].c;
   }
 
   async exists() {
@@ -43,10 +47,21 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
     while (!!!offset || hasMore) {
       const query = cloneDeep(this);
       const records = await query.offset(offset).limit(size);
-      hasMore = isNotEmpty(records);
+      hasMore = !isEmpty(records);
       if (!hasMore) return;
       await cb(records);
       offset += size;
     }
+  }
+
+  cOrderBy(expressions: String): this {
+    const orders = (expressions || '').split('|');
+    for (const order of orders) {
+      const [column, direction] = order.split(':');
+      if (!column) continue;
+      this.orderBy(column, (direction || 'ASC') as OrderByDirection);
+    }
+
+    return this;
   }
 }

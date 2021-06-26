@@ -1,28 +1,40 @@
 import { Module, Global } from '@nestjs/common';
-import { BaseValidator } from './validator';
-import { getProviders } from './providers';
+import {
+  BaseValidator,
+  ExistsConstraint,
+  IsUniqueConstraint,
+  IsValueFromConfigConstraint,
+} from './validator';
 import * as Knex from 'knex';
 import * as KnexConfig from '../../../knexfile';
 import { KNEX_CONNECTION } from './constants';
 import { BaseModel } from './db';
 import { DiscoveryModule } from '@nestjs/core';
+import { DbOperationsCommand, InitApplicationSetup } from './console';
+import { ConfigModule } from '@nestjs/config';
+import config from '@config/index';
+
+BaseModel.knex(Knex(KnexConfig));
 
 @Global()
 @Module({
-  imports: [DiscoveryModule],
+  imports: [
+    DiscoveryModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      expandVariables: true,
+      load: config,
+    }),
+  ],
   providers: [
-    ...getProviders(),
-    {
-      provide: KNEX_CONNECTION,
-      useFactory: async () => {
-        BaseModel.knex(Knex(KnexConfig));
-        BaseModel.setModulePaths([
-          // add your module names here
-          'user',
-        ]);
-        return Knex(KnexConfig);
-      },
-    },
+    DbOperationsCommand,
+    InitApplicationSetup,
+    BaseValidator,
+    // HttpExplorer,
+    IsUniqueConstraint,
+    ExistsConstraint,
+    IsValueFromConfigConstraint,
+    { provide: KNEX_CONNECTION, useFactory: async () => Knex(KnexConfig) },
   ],
   exports: [BaseValidator],
 })
