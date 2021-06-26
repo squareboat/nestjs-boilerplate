@@ -1,6 +1,6 @@
 import { QueryBuilder, Model, Page, OrderByDirection } from 'objection';
 import { cloneDeep, isEmpty } from 'lodash';
-import { Pagination } from './interfaces';
+import { Pagination } from '../interfaces';
 
 export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   M,
@@ -23,12 +23,12 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
         perPage,
         total: result.total,
       },
-      data: (result.results as unknown) as T[],
+      data: result.results as unknown as T[],
     };
   }
 
   async allPages<T>(): Promise<Pagination<T>> {
-    return { data: ((await this) as unknown) as T[] };
+    return { data: (await this) as unknown as T[] };
   }
 
   async onlyCount() {

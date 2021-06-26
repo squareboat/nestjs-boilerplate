@@ -1,6 +1,6 @@
 import { pick } from 'lodash';
 import { Model } from 'objection';
-import { LoadRelSchema } from './interfaces';
+import { LoadRelSchema } from '../interfaces';
 import { CustomQueryBuilder } from './queryBuilder';
 
 export class BaseModel extends Model {

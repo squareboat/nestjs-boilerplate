@@ -1,3 +1,4 @@
+import { Transformer$IncludeMethodOptions } from '../interfaces';
 import { Context } from '../utils/context';
 import { ExpParser } from '../utils/expParser';
 
@@ -20,7 +21,7 @@ export abstract class Transformer {
   async item(
     obj: Record<string, any>,
     transformer: Transformer,
-    options?: Record<string, any>,
+    options?: Transformer$IncludeMethodOptions,
   ): Promise<Record<string, any> | null> {
     if (!obj) return null;
     transformer = this.applyOptions(transformer, options);
@@ -38,7 +39,7 @@ export abstract class Transformer {
   async collection(
     arr: Array<Record<string, any> | string>,
     transformer: Transformer,
-    options?: Record<string, any>,
+    options?: Transformer$IncludeMethodOptions,
   ): Promise<Array<any>> {
     if (!arr || arr.length === 0) return [];
     transformer = this.applyOptions(transformer, options);
@@ -52,12 +53,14 @@ export abstract class Transformer {
 
   applyOptions(
     transformer: Transformer,
-    options: Record<string, any>,
+    options?: Transformer$IncludeMethodOptions,
   ): Transformer {
     options = options || {};
+
     if (options.include) {
       transformer.parseIncludes(options.include.join(','));
     }
+
     transformer.ctx.setRequest(this.ctx.getRequest());
     return transformer;
   }
