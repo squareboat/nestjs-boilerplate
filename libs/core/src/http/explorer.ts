@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { ROUTE_NAME } from './constants';
-import { HttpMetadata } from './Metadata';
+import { HttpMetadata } from './metadata';
 import { PATH_METADATA } from '@nestjs/common/constants';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
