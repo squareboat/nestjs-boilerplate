@@ -5,7 +5,7 @@ import {
   IsUniqueConstraint,
   IsValueFromConfigConstraint,
 } from './validator';
-import * as Knex from 'knex';
+import Knex from 'knex';
 import * as KnexConfig from '../../../knexfile';
 import { KNEX_CONNECTION } from './constants';
 import { BaseModel } from './db';
