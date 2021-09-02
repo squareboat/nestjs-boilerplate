@@ -1,9 +1,9 @@
 import { NestFactory, HttpAdapterHost } from '@nestjs/core';
 import { AppModule } from './app';
 import { useContainer } from 'class-validator';
-import * as bodyParser from 'body-parser';
-import * as helmet from 'helmet';
-import * as rateLimit from 'express-rate-limit';
+import bodyParser from 'body-parser';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import { RequestGuard, ExceptionFilter, TimeoutInterceptor } from '@libs/core';
 import { ConfigService } from '@nestjs/config';
 
