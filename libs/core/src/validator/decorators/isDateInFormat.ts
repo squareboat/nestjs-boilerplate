@@ -5,7 +5,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import * as moment from 'moment';
+import moment from 'moment';
 
 @ValidatorConstraint({ async: true })
 class IsDateInFormatConstraint implements ValidatorConstraintInterface {
@@ -25,7 +25,7 @@ export function IsDateInFormat(
   format: string,
   validationOptions?: ValidationOptions,
 ) {
-  return function(object: Record<string, any>, propertyName: string): void {
+  return function (object: Record<string, any>, propertyName: string): void {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
