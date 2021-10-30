@@ -51,7 +51,7 @@
     "dotenv": "^10.0.0",
     "express-rate-limit": "^5.5.0",
     "helmet": "^4.6.0",
-    "knex": "^0.21.15",
+    "knex": "^0.21.21",
     "moment": "^2.29.1",
     "mysql2": "^2.3.2",
     "objection": "^2.2.17",
