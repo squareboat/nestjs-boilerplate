@@ -9,11 +9,17 @@ import { Injectable, Inject } from '@nestjs/common';
 import { KNEX_CONNECTION } from '../../constants';
 import * as Knex from 'knex';
 import { isEmpty } from 'lodash';
+import { ValidatorHelper } from '../validatorHelper';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
-export class ExistsConstraint implements ValidatorConstraintInterface {
-  constructor(@Inject(KNEX_CONNECTION) private connection: Knex) {}
+export class ExistsConstraint
+  extends ValidatorHelper
+  implements ValidatorConstraintInterface
+{
+  constructor(@Inject(KNEX_CONNECTION) private connection: Knex) {
+    super();
+  }
 
   public async validate(
     value: string | string[],
@@ -34,7 +40,8 @@ export class ExistsConstraint implements ValidatorConstraintInterface {
       ? query.whereIn(column, value)
       : query.where(column, value);
 
-    if (where) query.where(where);
+    if (where)
+      query.where(this.resolveContext(where, (args.object as any)['$']));
 
     const result = await query.count({ count: '*' });
     const record = result[0] || {};

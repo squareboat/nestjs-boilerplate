@@ -3,15 +3,19 @@ import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { Injectable, Type } from '@nestjs/common';
 import { ValidationFailed } from '../exceptions';
-
+ 
 @Injectable()
 export class BaseValidator {
-  async fire<T>(inputs: Record<string, any>, schemaMeta: Type<T>): Promise<T> {
-    const schema: T = plainToClass(schemaMeta, inputs);
+  async fire<T>(
+    inputs: Record<string, any>,
+    schemaMeta: Type<T>,
+    context?: Record<string, any>,
+  ): Promise<T> {
+    const schema: T = plainToClass(schemaMeta, { ...inputs, $: context });
     const errors = await validate(schema as Record<string, any>, {
       stopAtFirstError: true,
     });
-
+ 
     /**
      * Process errors, if any.
      * Throws new ValidationFailed Exception with validation errors
@@ -26,40 +30,40 @@ export class BaseValidator {
             childErrorBag[key] = errorsFromParser[key];
           }
         }
-
+ 
         bag = { ...bag, ...childErrorBag };
       }
-
+ 
       throw new ValidationFailed(bag);
     }
-
+    delete schema['$'];
     return schema;
   }
-
+ 
   parseError(error) {
     const children = [];
     for (const child of error.children || []) {
       children.push(this.parseError(child));
     }
-
+ 
     const messages = [];
     for (const c in error.constraints) {
       let message = error.constraints[c];
       message = message.replace(error.property, startCase(error.property));
       messages.push(message);
     }
-
+ 
     const errors = {};
     if (!isEmpty(messages)) {
       errors[error.property] = messages;
     }
-
+ 
     for (const child of children) {
       for (const key in child) {
         errors[`${error.property}.${key}`] = child[key];
       }
     }
-
+ 
     return errors;
   }
 }
