@@ -1,6 +1,7 @@
+import { Request } from '../interfaces';
 import { get } from 'lodash';
 import { Transformer } from '../../transformers';
-
+ 
 export class RestController {
   /**
    * Transform a object
@@ -15,12 +16,12 @@ export class RestController {
     options?: Record<string, any>,
   ): Promise<Record<string, any>> {
     transformer = this.setTransformerContext(transformer, options);
-
+ 
     return await transformer
       .parseIncludes(this.getIncludes(options?.req))
       .work(obj);
   }
-
+ 
   /**
    * Transform collection/array
    *
@@ -34,7 +35,7 @@ export class RestController {
     options?: Record<string, any>,
   ): Promise<Array<Record<string, any>>> {
     transformer = this.setTransformerContext(transformer, options);
-
+ 
     const collection = [];
     for (const o of collect) {
       collection.push(
@@ -43,7 +44,7 @@ export class RestController {
     }
     return collection;
   }
-
+ 
   /**
    * Transform with paginate
    * @param obj
@@ -56,13 +57,13 @@ export class RestController {
     options?: Record<string, any>,
   ): Promise<Record<string, any>> {
     const collection = this.collection(obj.data, transformer, options);
-
+ 
     return {
       data: await collection,
       pagination: obj.pagination,
     };
   }
-
+ 
   private setTransformerContext(
     transformer: Transformer,
     options: Record<string, any>,
@@ -71,9 +72,13 @@ export class RestController {
     transformer.ctx.setRequest(options?.req || {});
     return transformer;
   }
-
+ 
   getIncludes(req: any) {
     if (!req) return '';
     return get(req.all(), 'include', '');
+  }
+ 
+  buildContext(req: Request): Record<string, any> {
+    return { user: req.user, ...req.all() };
   }
 }
