@@ -1,11 +1,26 @@
 import { registerAs } from '@nestjs/config';
-import { basePath } from '@libs/core';
+import { DatabaseOptions } from '@squareboat/nestjs-objection';
 
-export default registerAs('db', () => ({
-  type: process.env.DB_TYPE || 'mysql2',
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 3306,
-  username: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || 'root',
-  database: process.env.DB_DATABASE || 'test',
-}));
+export default registerAs(
+  'db',
+  () =>
+    ({
+      isGlobal: true,
+      default: 'pg',
+      connections: {
+        pg: {
+          client: 'pg',
+          debug: !!+process.env.DB_DEBUG,
+          connection: {
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT,
+            database: process.env.DB_DATABASE,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            charset: 'utf8',
+          },
+          useNullAsDefault: true,
+        },
+      },
+    } as DatabaseOptions),
+);

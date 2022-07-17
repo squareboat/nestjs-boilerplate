@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UserController } from './controllers';
 import { UserService } from './services';
-import { USER_REPOSITORY } from './constants';
+import { UserModuleConstants } from './constants';
 import { UserRepository } from './repositories';
 import { GreetUser } from './commands';
 
@@ -11,7 +11,7 @@ import { GreetUser } from './commands';
   providers: [
     UserService,
     GreetUser,
-    { provide: USER_REPOSITORY, useClass: UserRepository },
+    { provide: UserModuleConstants.userRepo, useClass: UserRepository },
   ],
 })
 export class UserModule {}

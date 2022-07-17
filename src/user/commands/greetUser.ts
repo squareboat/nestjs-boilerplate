@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { Command, _cli } from '@squareboat/nest-console';
+import { Command, ConsoleIO } from '@squareboat/nest-console';
 
 @Injectable()
-@Command('user:greet', { desc: 'Command to create a user' })
+@Command('user:greet {name}', { desc: 'Command to greet a user' })
 export class GreetUser {
-  public async handle(): Promise<void> {
-    // ask for input from the client
-    const name = await _cli.ask('What is your name?');
+  public async handle(_cli: ConsoleIO): Promise<void> {
+    const name = _cli.argument<string>('name');
 
     // print success message
     _cli.success(
-      `Hello ${name}, enjoy building cool stuff using this boilerplate! 😁`,
+      `Hello ${name}, enjoy building cool stuff with this boilerplate! 😁`,
     );
 
     _cli.table([

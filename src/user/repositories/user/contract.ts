@@ -1,5 +1,4 @@
-import { User$Model } from '@app/_common';
-import { RepositoryContract } from '@libs/core';
+import { UserModel } from '@app/user/models';
+import { RepositoryContract } from '@squareboat/nestjs-objection';
 
-export interface UserRepositoryContract
-  extends RepositoryContract<User$Model> {}
+export interface UserRepositoryContract extends RepositoryContract<UserModel> {}

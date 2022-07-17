@@ -1,4 +1,4 @@
-import { Transformer } from '@libs/core';
+import { Transformer } from '@libs/boat';
 
 export class UserDetailTransformer extends Transformer {
   availableIncludes = ['extra', 'address', 'pin'];

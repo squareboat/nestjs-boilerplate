@@ -1,1 +1,3 @@
-export const USER_REPOSITORY = 'USER_REPOSITORY';
+export class UserModuleConstants {
+  static userRepo = 'user_module/user_repo';
+}

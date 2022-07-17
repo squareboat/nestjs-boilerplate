@@ -1,12 +1,11 @@
 import { UserModel } from '../../models';
 import { Injectable } from '@nestjs/common';
-import { DatabaseRepository as DB, InjectModel } from '@libs/core';
 import { UserRepositoryContract } from './contract';
-import { User$Model } from '@app/_common';
+import { DatabaseRepository, InjectModel } from '@squareboat/nestjs-objection';
 
 @Injectable()
 export class UserRepository
-  extends DB<User$Model>
+  extends DatabaseRepository<UserModel>
   implements UserRepositoryContract
 {
   @InjectModel(UserModel)

@@ -1,9 +1,5 @@
 {
-  "moduleFileExtensions": [
-    "js",
-    "json",
-    "ts"
-  ],
+  "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
@@ -11,7 +7,7 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "moduleNameMapper": {
-    "@libs/core/(.*)": "<rootDir>/../libs/core/src/$1",
-    "@libs/core": "<rootDir>/../libs/core/src"
+    "@libs/boat/(.*)": "<rootDir>/../libs/boat/src/$1",
+    "@libs/boat": "<rootDir>/../libs/boat/src"
   }
 }

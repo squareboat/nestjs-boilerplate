@@ -1,12 +1,14 @@
-import { USER_REPOSITORY } from '../constants';
 import { Injectable, Inject } from '@nestjs/common';
 import { UserRepositoryContract } from '../repositories';
 import { ListensTo } from '@squareboat/nest-events';
 import { UserSignedUp } from '../events/userSignedUp';
+import { UserModuleConstants } from '../constants';
 
 @Injectable()
 export class UserService {
-  constructor(@Inject(USER_REPOSITORY) private users: UserRepositoryContract) {}
+  constructor(
+    @Inject(UserModuleConstants.userRepo) private users: UserRepositoryContract,
+  ) {}
 
   async get(): Promise<Record<string, any>> {
     return this.users.firstWhere({});
