@@ -1,4 +1,4 @@
-import * as queryString from 'query-string';
+import queryString from 'querystring';
 import { URL } from 'url';
 
 export class HttpMetadata {

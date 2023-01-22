@@ -5,6 +5,7 @@ import { BoatModule } from '@libs/boat';
 import { ConsoleModule } from '@squareboat/nest-console';
 import { ObjectionModule } from '@squareboat/nestjs-objection';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { LocalizationModule } from '@squareboat/nestjs-localization';
 
 @Module({
   imports: [
@@ -13,6 +14,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => config.get('db'),
       inject: [ConfigService],
+    }),
+    LocalizationModule.register({
+      path: 'resources/lang',
+      fallbackLang: 'en',
     }),
     BoatModule,
     UserModule,
