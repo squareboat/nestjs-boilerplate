@@ -39,7 +39,7 @@
     "@nestjs/core": "^9.3.9",
     "@nestjs/platform-express": "^9.3.9",
     "@nestjs/schematics": "^9.0.4",
-    "@squareboat/nest-console": "^1.1.0",
+    "@squareboat/nest-console": "^1.1.1",
     "@squareboat/nest-events": "^0.1.0",
     "@squareboat/nestjs-localization": "^0.0.4",
     "@squareboat/nestjs-objection": "^0.1.9",
