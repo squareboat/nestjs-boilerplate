@@ -67,6 +67,12 @@ export abstract class Transformer {
 
   parseIncludes(include = ''): this {
     this.includes = ExpParser.from(include).toObj();
+    for (const include of this.defaultIncludes) {
+      if (!(include in this.includes)) {
+        this.includes[include] = undefined;
+      }
+    }
+
     return this;
   }
 
