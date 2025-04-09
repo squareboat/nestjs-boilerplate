@@ -22,7 +22,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
+    "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start:dev": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -30,14 +30,16 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./apps/nestjs-boilerplate/test/jest-e2e.json"
   },
   "dependencies": {
+    "@aws-sdk/credential-providers": "^3.782.0",
     "@nestjs/config": "^4.0.2",
     "@nestjs/throttler": "^6.4.0",
     "@sentry/node": "^9.12.0",
     "@squareboat/nest-console": "^1.1.4",
     "@squareboat/nest-events": "^0.1.1",
+    "@squareboat/nest-queue": "^0.1.5",
     "@squareboat/nestjs-localization": "^0.0.5",
     "@squareboat/nestjs-objection": "^0.3.9",
     "bcryptjs": "^3.0.2",
@@ -77,8 +79,8 @@
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
-    "@nestjs/core": "^9.0.0 || ^10.0.0 || ^11.0.0",
     "@nestjs/common": "^9.0.0 || ^10.0.0 || ^11.0.0",
+    "@nestjs/core": "^9.0.0 || ^10.0.0 || ^11.0.0",
     "@nestjs/platform-express": "^9.0.0 || ^10.0.0 || ^11.0.0",
     "reflect-metadata": "^0.1.13 || ^0.2.2"
   },
@@ -96,12 +98,13 @@
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "roots": [
-      "<rootDir>/src/",
-      "<rootDir>/libs/"
+      "<rootDir>/libs/",
+      "<rootDir>/apps/"
     ],
     "moduleNameMapper": {
       "@libs/boat/(.*)": "<rootDir>/libs/boat/src/$1",
-      "@libs/boat": "<rootDir>/libs/boat/src"
+      "@libs/boat": "<rootDir>/libs/boat/src",
+      "^@libs/user(|/.*)$": "<rootDir>/libs/user/src/$1"
     }
   }
 }

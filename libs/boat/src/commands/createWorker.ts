@@ -12,7 +12,7 @@ export class GenWorker {
         const nestCliContent = await fs.readFile(nestCliPath, 'utf8');
         const nestCliJson: { projects: Record<string, any>; root: string; sourceRoot: string, compilerOptions:Record<string, any>, monorepo:Boolean } = JSON.parse(nestCliContent);
         if (nestCliJson.monorepo)
-            await Create.worker(`${appName}Worker`, _cli);
+            await Create.worker(`${appName}-worker`, _cli);
         else {
             _cli.error('This command can only be run in monorepo mode');
             _cli.info(`Hint: Run "node cli convert:monoRepo ${appName}" to convert to monorepo mode`);
