@@ -103,8 +103,7 @@
     ],
     "moduleNameMapper": {
       "@libs/boat/(.*)": "<rootDir>/libs/boat/src/$1",
-      "@libs/boat": "<rootDir>/libs/boat/src",
-      "^@libs/user(|/.*)$": "<rootDir>/libs/user/src/$1"
+      "@libs/boat": "<rootDir>/libs/boat/src"
     }
   }
 }
