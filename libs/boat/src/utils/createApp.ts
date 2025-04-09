@@ -146,8 +146,7 @@ export class Create {
   static async lib(appName: string, cli: ConsoleIO) {
     await new Promise<void>((resolve, reject) => {
       const childProcess = spawn('nest', ['g', 'lib', appName], {
-        shell: true,
-        stdio: 'inherit',
+        shell: true
       });
       childProcess.on('close', (code) => (code === 0 ? resolve() : reject()));
     });
