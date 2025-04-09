@@ -7,6 +7,7 @@ import _ from 'lodash';
 import { parsePhoneNumber } from 'libphonenumber-js/max';
 import { lastDayOfYear, isBefore, subDays, format } from 'date-fns';
 import { AppConfig } from '../utils';
+import { Logger } from '@squareboat/nest-console';
 
 @Injectable()
 export class CustomValidator implements OnModuleInit {
@@ -320,10 +321,10 @@ export class CustomValidator implements OnModuleInit {
     });
     await validatorPromise;
     const { errors } = validation.errors;
-    // Logger().info(
-    //   '🚀 ~ file: customValidator.ts:85 ~ CustomValidator ~ validateAsync ~ errors:',
-    //   errors,
-    // );
+    Logger.info(
+      '🚀 ~ file: customValidator.ts:85 ~ CustomValidator ~ validateAsync ~ errors:',
+      errors,
+    );
     if (Object.keys(errors).length > 0) {
       throw new ValidationFailed(errors);
     }
