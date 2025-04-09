@@ -127,7 +127,7 @@ export default registerAs(
       await BuildUtils.writeFile('libs/boat/src/commands/index.ts', index);
 
       await BuildUtils.deleteFile('libs/boat/src/commands/init.ts');
-
+      await fs.rm('test', { recursive: true, force: true });
       _cli.success('Project initialized successfully');
     } catch (error) {
       console.error('Error initializing project:', error);
