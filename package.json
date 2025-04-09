@@ -37,7 +37,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/throttler": "^6.4.0",
     "@sentry/node": "^9.12.0",
-    "@squareboat/nest-console": "^1.1.4",
+    "@squareboat/nest-console": "^1.2.0",
     "@squareboat/nest-events": "^0.1.1",
     "@squareboat/nest-queue": "^0.1.5",
     "@squareboat/nestjs-localization": "^0.0.5",
