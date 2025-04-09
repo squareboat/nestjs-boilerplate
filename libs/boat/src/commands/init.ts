@@ -91,6 +91,10 @@ export default registerAs(
 
       let app = await BuildUtils.readFile('src/app.ts');
       app = app.replace(
+        `import { BoatModule } from '@libs/boat';`,
+        `import { BoatModule } from '@libs/boat';\nimport { ConfigModule, ConfigService } from '@nestjs/config';\nimport { ObjectionModule } from '@squareboat/nestjs-objection';`
+      );
+      app = app.replace(
         `BoatModule,`,
         `ObjectionModule.registerAsync({
           isGlobal: true,
@@ -115,7 +119,7 @@ export default registerAs(
       });
 
       let module = await BuildUtils.readFile('libs/boat/src/module.ts');
-      module = module.replace(`, Init`, '');
+      module = module.replace(/, Init/g, '');
       await BuildUtils.writeFile('libs/boat/src/module.ts', module);
 
       let index = await BuildUtils.readFile('libs/boat/src/commands/index.ts');
