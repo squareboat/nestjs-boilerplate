@@ -1,15 +1,34 @@
 import { startCase, isEmpty } from 'lodash';
-import { validate } from 'class-validator';
+import { validate, ValidationOptions } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { Injectable, Type } from '@nestjs/common';
 import { ValidationFailed } from '../exceptions';
+import { Context } from '../utils';
+import { Request } from '../rest';
 
 @Injectable()
 export class BaseValidator {
-  async fire<T>(inputs: Record<string, any>, schemaMeta: Type<T>): Promise<T> {
+  private context: Context;
+
+  constructor() {
+    this.context = new Context();
+  }
+
+  setContext(req: Request) {
+    this.context.setRequest(req.getContext());
+    return this;
+  }
+
+  async fire<T>(
+    inputs: Record<string, any>,
+    schemaMeta: Type<T>,
+    params: ValidationOptions = {},
+    throwErr: boolean = true,
+  ): Promise<T> {
     const schema: T = plainToClass(schemaMeta, inputs);
     const errors = await validate(schema as Record<string, any>, {
       stopAtFirstError: true,
+      ...params,
     });
 
     /**
@@ -29,7 +48,6 @@ export class BaseValidator {
 
         bag = { ...bag, ...childErrorBag };
       }
-
       throw new ValidationFailed(bag);
     }
 
@@ -61,5 +79,18 @@ export class BaseValidator {
     }
 
     return errors;
+  }
+
+  async parseValidated<T>(
+    inputs: Record<string, any>,
+    schemaMeta: Type<T>,
+    throwErr: boolean = true,
+  ) {
+    try {
+      const res = await this.fire(inputs, schemaMeta, {}, throwErr);
+      return { schema: res };
+    } catch (err) {
+      return { error: err.errors };
+    }
   }
 }
