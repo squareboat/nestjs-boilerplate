@@ -1,4 +1,5 @@
-import { parseAsync, parse } from 'json2csv';
+import { AsyncParser } from "@json2csv/node"
+import { Parser } from "@json2csv/plainjs";
 
 export class Json2Csv {
   static handle(data: Record<string, any>, options: { delimiter: string }) {
@@ -23,13 +24,15 @@ export class Json2Csv {
     data: Record<string, any>,
     opts: Record<string, any>,
   ): Promise<string> {
-    return parseAsync(data, opts);
+    const parser = new AsyncParser(opts);
+    return parser.parse(data).promise();
   }
 
-  static async parse(
+  static parse(
     data: Record<string, any>,
     opts: Record<string, any>,
-  ): Promise<string> {
-    return parse(data, opts);
+  ): string {
+    const parser = new Parser(opts);
+    return parser.parse(data);
   }
 }
