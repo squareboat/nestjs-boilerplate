@@ -30,4 +30,6 @@ export interface ServerOptions {
   addValidationContainer?: boolean;
   port?: number;
   globalPrefix?: string;
+  isCluster?: boolean;
+  numCPUs?: number;
 }
