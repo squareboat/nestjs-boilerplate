@@ -16,14 +16,15 @@ function checkFileExistsSync(filepath) {
   return flag;
 }
 
-if (!checkFileExistsSync('./dist/src/app.js')) {
+const fileName = './dist/src/app'; // CHANGE THE FILE NAME IF NEEDED
+if (!checkFileExistsSync(`${fileName}.js`)) {
   // CHANGE THE FILE TO CHECK IF NEEDED
   console_1.Logger.error(' PLEASE BUILD THE CLI PROJECT FIRST ');
   console_1.Logger.info('🪄  Run command: `npm run build` '); // CHANGE THE BUILD COMMAND IF NEEDED
   return process.exit();
 }
 
-const app_1 = require('./dist/src/app'); // CHANGE THE IMPORT IF NEEDED
+const app_1 = require(fileName); // CHANGE THE IMPORT IF NEEDED
 
 async function bootstrap() {
   const app = await core_1.NestFactory.createApplicationContext(

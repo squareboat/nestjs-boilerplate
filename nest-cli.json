@@ -1,6 +1,7 @@
 {
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
+  "defaultLibraryPrefix": "@libs",
   "projects": {
     "boat": {
       "type": "library",
