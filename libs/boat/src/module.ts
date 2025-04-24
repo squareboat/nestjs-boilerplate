@@ -3,7 +3,7 @@ import config from '@config/index';
 import { ConfigModule } from '@nestjs/config';
 import { DiscoveryModule } from '@nestjs/core';
 import { BaseValidator } from './validator';
-import { MakeMonorepo, GenApp, GenLib, Init, GenWorker } from './commands';
+import { Init } from './commands';
 
 @Global()
 @Module({
@@ -15,7 +15,7 @@ import { MakeMonorepo, GenApp, GenLib, Init, GenWorker } from './commands';
       load: config,
     }),
   ],
-  providers: [BaseValidator, MakeMonorepo, GenApp, GenLib, Init, GenWorker],
+  providers: [BaseValidator, Init],
   exports: [],
 })
 export class BoatModule {}

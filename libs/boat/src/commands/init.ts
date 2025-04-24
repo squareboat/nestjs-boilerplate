@@ -119,14 +119,11 @@ export default registerAs(
       });
 
       let module = await BuildUtils.readFile('libs/boat/src/module.ts');
-      module = module.replace(/, Init/g, '');
+      module = module.replace(`import { Init } from './commands';`, '');
+      module = module.replace(', Init', '');
       await BuildUtils.writeFile('libs/boat/src/module.ts', module);
 
-      let index = await BuildUtils.readFile('libs/boat/src/commands/index.ts');
-      index = index.replace(`export * from './init';`, ``);
-      await BuildUtils.writeFile('libs/boat/src/commands/index.ts', index);
-
-      await BuildUtils.deleteFile('libs/boat/src/commands/init.ts');
+      await fs.rm('libs/boat/src/commands', { recursive: true, force: true });
       await fs.rm('test', { recursive: true, force: true });
       _cli.success('Project initialized successfully');
     } catch (error) {
