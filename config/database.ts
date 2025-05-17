@@ -7,10 +7,10 @@ export default registerAs(
   () =>
     ({
       isGlobal: true,
-      default: 'pg',
+      default: 'mysql2',
       connections: {
-        pg: {
-          client: 'pg',
+        mysql2: {
+          client: 'mysql2',
           debug: !!+process.env.DB_DEBUG,
           connection: {
             host: process.env.DB_HOST,

@@ -6,9 +6,13 @@ export class UserDetailTransformer extends Transformer {
 
   async transform(user: Record<string, any>): Promise<Record<string, any>> {
     return {
-      id: user.uuid,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      dob: user.dob,
+      username: user.username,
+      role: user.role,
     };
   }
 
