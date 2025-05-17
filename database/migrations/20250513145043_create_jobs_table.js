@@ -3,6 +3,7 @@ const { timestamps } = require("../utils");
 exports.up = async function (knex) {
    await knex.schema.createTable('jobs', (table) => {
         table.increments('id').primary();
+        table.uuid('uuid').defaultTo(knex.raw('(UUID())'));
         table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE');
         table.string('title').notNullable();
         table.string('description').notNullable();

@@ -1,7 +1,9 @@
 import { Request, Response, RestController } from '@libs/boat';
-import { Controller, Get, Req, Res } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { UserService } from '../services';
 import { UserDetailTransformer } from '@app/transformer';
+import { JwtAuthGuard } from '@app/auth/guards/jwt-auth.guard';
+
 
 @Controller('api/users')
 export class UserController extends RestController {
@@ -9,7 +11,10 @@ export class UserController extends RestController {
     super();
   }
 
+
+  
   @Get('/profile')
+  @UseGuards(JwtAuthGuard)
   async getProfile(
     @Req() req: Request,
     @Res() res: Response,
