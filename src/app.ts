@@ -7,6 +7,7 @@ import { ObjectionModule } from '@squareboat/nestjs-objection';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LocalizationModule } from '@squareboat/nestjs-localization';
 import { AuthModule } from './auth/auth.module';
+import { RecruiterModule } from './recruiter/recruiter.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     EventModule,
     ConsoleModule,
-    AuthModule
+    AuthModule,
+    RecruiterModule
   ],
   controllers: [],
   providers: [],

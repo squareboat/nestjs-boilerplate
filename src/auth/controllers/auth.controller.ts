@@ -67,11 +67,11 @@ export class AuthController extends RestController {
 
     @Post('request-password-reset')
     async requestPasswordReset(@Body('username') username: string): Promise<any> {
-        return this.authService.requestPasswordReset(username);
+        return await this.authService.requestPasswordReset(username);
     }
     @Post('reset-password')
     async resetPassword(@Body('token') token: string, @Body('password') password: string): Promise<any> {
-        return this.authService.resetPassword(token, password);
+        return await this.authService.resetPassword(token, password);
     }
 
 }
