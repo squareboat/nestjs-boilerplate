@@ -13,44 +13,35 @@ export class ExpParser {
   private handle(): this {
     let o = {};
     let p = [];
-    let inArray = false;
     const presenter = [];
 
     const length = this.exp.length;
     let i = 0;
+    let b = 0;
     while (i < length) {
-      const lastChar = this.exp.charCodeAt(i - 1);
       const ch = this.exp.charCodeAt(i);
-      if (ch === 91) {
+      if (ch == 91) b++;
+      if (ch == 93) b--;
+      if (b == -1) return this;
+      if (ch == 91 && b == 1) {
         o['name'] = p.join('');
-        o['args'] = [];
         p = [];
-        inArray = true;
-      } else if (inArray && ch === 44) {
-        o['args'].push(p.join(''));
-        p = [];
-      } else if (ch === 93) {
-        o['args'].push(p.join(''));
+      } else if (ch == 93 && b == 0) {
+        o['args'] = [p.join('')];
         presenter.push(o);
+        p = [];
         o = {};
-        p = [];
-        inArray = false;
-      } else if (lastChar !== 93 && ch === 44) {
-        o['name'] = p.join('');
-        presenter.push(o);
-        o = {};
-        p = [];
-      } else if (ch !== 93 && length - i == 1) {
-        p.push(String.fromCharCode(ch));
-        o['name'] = p.join('');
-        presenter.push(o);
-      } else if (ch !== 44) {
-        p.push(String.fromCharCode(ch));
-      }
-
+      } else if (ch == 44 && b == 0) {
+        if (p.join('') != '') {
+          o['name'] = p.join('');
+          presenter.push(o);
+          p = [];
+          o = {};
+        }
+      } else p.push(String.fromCharCode(ch));
       i++;
     }
-
+    if (this.exp.charCodeAt(i - 1) != 93) presenter.push({ name: p.join('') });
     this.parsedExp = presenter;
 
     return this;
