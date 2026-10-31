@@ -20,7 +20,6 @@ export class UserController extends RestController {
     @Res() res: Response,
   ): Promise<Response> {
     const user = await this.service.get();
-    console.log(user);
 
     return res.success(
       await this.transform(user, new UserDetailTransformer(), { req }),

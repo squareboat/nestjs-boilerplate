@@ -20,7 +20,6 @@ export class AuthService {
 
     async validateUser(username: string, password: string): Promise<any> {
         const user = await this.userService.findOne(username);
-        console.log(user);
 
         if (user && await bcrypt.compare(password, user.password)) {
             const { password, ...result } = user;
@@ -45,8 +44,7 @@ export class AuthService {
 
     async requestPasswordReset(username: string): Promise<any> {
         const user = await this.userService.findOne(username);
-        console.log(user);
-        
+
         if (!user) {
             throw new Error('User not found');
         }
@@ -60,13 +58,9 @@ export class AuthService {
 
     async resetPassword(token: string, newPassword: string): Promise<any> {
         try {
-            console.log('Token:', token);
-            console.log('Secret:', process.env.RESET_PASSWORD_SECRET);
             const payload = this.jwtService.verify(token, { secret: process.env.RESET_PASSWORD_SECRET });
-            console.log('Payload:', payload);
 
             const user = await this.users.firstWhere({ id: payload.sub });
-            console.log('User:', user);
 
             if (!user) {
                 throw new Error('User not found');
