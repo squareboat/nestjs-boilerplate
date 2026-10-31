@@ -12,6 +12,11 @@ const yargs = require(
 );
 const fs = require('fs');
 
+// Run every command from the project this file is in, whatever the current
+// directory is: .env, database/migrations, resources/lang and `init` are
+// all relative to it.
+process.chdir(__dirname);
+
 function checkFileExistsSync(filepath) {
   let flag = true;
   try {
@@ -22,7 +27,7 @@ function checkFileExistsSync(filepath) {
   return flag;
 }
 
-if (!checkFileExistsSync('./dist/src/app.js')) {
+if (!checkFileExistsSync(path.join(__dirname, 'dist/src/app.js'))) {
   // CHANGE THE FILE TO CHECK IF NEEDED
   console_1.Logger.error(' PLEASE BUILD THE CLI PROJECT FIRST ');
   console_1.Logger.info('🪄  Run command: `npm run build` '); // CHANGE THE BUILD COMMAND IF NEEDED

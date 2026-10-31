@@ -38,8 +38,19 @@ const isTrue = (value: unknown) => value === true || value === 'true';
 })
 export class InitApplicationSetup {
   async handle(_cli: ConsoleIO): Promise<void> {
+    // the cli changes into its own directory, so this is the project root
     const root = process.cwd();
-    const files = BOILERPLATE_FILES.filter((f) => existsSync(join(root, f)));
+
+    const notFresh = this.notAFreshBoilerplate(root);
+    if (notFresh) {
+      _cli.error(` ${notFresh} `);
+      _cli.info(
+        'init only runs once, in an untouched copy of nestjs-boilerplate. Nothing changed.',
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const files = BOILERPLATE_FILES;
     const resetGit =
       !isTrue(_cli.option('keep-git')) && this.isBoilerplateClone(root);
 
@@ -98,6 +109,30 @@ export class InitApplicationSetup {
     }
 
     _cli.success('⚡ You are all set now! Do amazing things!');
+  }
+
+  /**
+   * Why `root` is not an untouched copy of the boilerplate, or null if it
+   * is: package.json is still named nestjs-boilerplate and every file
+   * init removes is still there. Keeps init away from apps that were made
+   * from the template (where the command still exists) and from any other
+   * project.
+   */
+  private notAFreshBoilerplate(root: string): string | null {
+    let name: string | undefined;
+    try {
+      name = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).name;
+    } catch {
+      return `No readable package.json in ${root}.`;
+    }
+    if (name !== 'nestjs-boilerplate') {
+      return `${root} is "${name}", not nestjs-boilerplate.`;
+    }
+    const missing = BOILERPLATE_FILES.filter((f) => !existsSync(join(root, f)));
+    if (missing.length) {
+      return `${missing.join(', ')} already removed, so init has run here before.`;
+    }
+    return null;
   }
 
   /**
