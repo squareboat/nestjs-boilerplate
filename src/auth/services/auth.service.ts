@@ -4,6 +4,7 @@ import type { UserRepositoryContract } from '@app/user/repositories';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { UniqueViolationError } from 'objection';
 import { mailService } from './mail.service';
 import { ValidationFailed } from '@libs/boat';
 import { SignupDto } from '../dto/signup';
@@ -41,15 +42,30 @@ export class AuthService {
 
         // store a bcrypt hash, validateUser() compares against it
         const password = await bcrypt.hash(input.password, 10);
-        // model properties are camelCase, knexSnakeCaseMappers maps them to the columns
-        return this.users.create({
-            firstName: input.first_name,
-            lastName: input.last_name,
-            dob: input.dob,
-            username: input.username,
-            email: input.email,
-            password,
-        });
+        try {
+            // model properties are camelCase, knexSnakeCaseMappers maps them to the columns
+            return await this.users.create({
+                firstName: input.first_name,
+                lastName: input.last_name,
+                dob: input.dob,
+                username: input.username,
+                email: input.email,
+                password,
+            });
+        } catch (e) {
+            // Two signups with the same username/email at once both pass the
+            // checks above; the unique index rejects the second insert.
+            if (e instanceof UniqueViolationError) {
+                const where = `${e.constraint ?? ''} ${(e.columns ?? []).join(' ')}`;
+                if (where.includes('email')) {
+                    throw new ValidationFailed({ email: ['Email is already registered'] });
+                }
+                if (where.includes('username')) {
+                    throw new ValidationFailed({ username: ['Username is already taken'] });
+                }
+            }
+            throw e;
+        }
     }
 
     async login(user: UserModel) {
