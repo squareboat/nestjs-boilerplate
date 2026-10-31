@@ -1,4 +1,5 @@
 import { IsDateString, IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
+import { IsPassword } from "./password";
 
 
 export class SignupDto {
@@ -15,8 +16,7 @@ export class SignupDto {
     @IsDateString({ strict: true })
     dob: string;
 
-    @IsString()
-    @IsNotEmpty()
+    @IsPassword()
     password: string;
 
     @IsString()
