@@ -39,29 +39,13 @@ export class AuthController extends RestController {
         @Body() signupDTO: SignupDto,
         @Res() res: Response,
     ): Promise<Response> {
-        try {
+        // errors go to the global ExceptionFilter (422 for a taken
+        // username/email, a generic 500 for anything else)
+        const user = await this.authService.signup(signupDTO);
 
-
-            // if (signupDTO.username) {
-            //     const user = await this.users.firstWhere({ username: signupDTO.username });
-            //     if (user) {
-            //         throw new Error('Username already exists');
-            //     }
-            // }
-            const user = await this.authService.signup(signupDTO);
-
-            return res.success(
-                await this.transform(user, new UserDetailTransformer()),
-            );
-
-        } catch (error) {
-            console.error('Signup error:', error);
-
-            return res.error({
-                message: error.message || 'Something went wrong',
-                statusCode: error.status || 500,
-            });
-        }
+        return res.success(
+            await this.transform(user, new UserDetailTransformer()),
+        );
     }
 
     @Post('request-password-reset')

@@ -5,6 +5,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { mailService } from './mail.service';
+import { ValidationFailed } from '@libs/boat';
 import { SignupDto } from '../dto/signup';
 
 
@@ -29,6 +30,15 @@ export class AuthService {
     }
 
     async signup(input: SignupDto): Promise<UserModel> {
+        const errors: Record<string, string[]> = {};
+        if (await this.users.exists({ username: input.username })) {
+            errors.username = ['Username is already taken'];
+        }
+        if (await this.users.exists({ email: input.email })) {
+            errors.email = ['Email is already registered'];
+        }
+        if (Object.keys(errors).length) throw new ValidationFailed(errors);
+
         // store a bcrypt hash, validateUser() compares against it
         const password = await bcrypt.hash(input.password, 10);
         // model properties are camelCase, knexSnakeCaseMappers maps them to the columns
