@@ -3,7 +3,13 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 const core_1 = require('@nestjs/core');
 const console_1 = require('@squareboat/nest-console');
-const yargs = require('yargs');
+const path = require('path');
+// yargs-parser is a dependency of nest-console, so resolve it from there (works with pnpm too)
+const yargs = require(
+  require.resolve('yargs-parser', {
+    paths: [path.dirname(require.resolve('@squareboat/nest-console'))],
+  }),
+);
 const fs = require('fs');
 
 function checkFileExistsSync(filepath) {
@@ -30,7 +36,7 @@ async function bootstrap() {
     app_1.AppModule,
     { logger: false },
   );
-  const argv = yargs.argv;
+  const argv = yargs(process.argv.slice(2));
   const c = argv._[0];
   argv.command = c;
   if (typeof argv.command != 'string') {
@@ -46,4 +52,3 @@ async function bootstrap() {
   return process.exit();
 }
 bootstrap();
-//# sourceMappingURL=cli.js.map
