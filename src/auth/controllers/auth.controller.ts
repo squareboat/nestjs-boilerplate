@@ -1,13 +1,13 @@
-import { Body, Controller, Inject, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { Body, Controller, Inject, Post, Res, UnauthorizedException } from "@nestjs/common";
 import { AuthService } from "../services/auth.service";
 import { LoginDto } from "../dto/login";
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { SignupDto } from "../dto/signup";
+import { RequestPasswordResetDto, ResetPasswordDto } from "../dto/password-reset";
 import { UserService } from "@app/user";
 import { UserDetailTransformer } from "@app/transformer";
-import { Request, Response, RestController } from '@libs/boat';
+import { type Response, RestController } from '@libs/boat';
 import { UserModuleConstants } from "@app/user/constants";
-import { UserRepositoryContract } from "@app/user/repositories";
+import type { UserRepositoryContract } from "@app/user/repositories";
 
 
 @Controller('api/auth')
@@ -40,38 +40,22 @@ export class AuthController extends RestController {
         @Body() signupDTO: SignupDto,
         @Res() res: Response,
     ): Promise<Response> {
-        try {
+        // errors go to the global ExceptionFilter (422 for a taken
+        // username/email, a generic 500 for anything else)
+        const user = await this.authService.signup(signupDTO);
 
-
-            // if (signupDTO.username) {
-            //     const user = await this.users.firstWhere({ username: signupDTO.username });
-            //     if (user) {
-            //         throw new Error('Username already exists');
-            //     }
-            // }
-            const user = await this.users.create(signupDTO);
-
-            return res.success(
-                await this.transform(user, new UserDetailTransformer()),
-            );
-
-        } catch (error) {
-            console.error('Signup error:', error);
-
-            return res.error({
-                message: error.message || 'Something went wrong',
-                statusCode: error.status || 500,
-            });
-        }
+        return res.success(
+            await this.transform(user, new UserDetailTransformer()),
+        );
     }
 
     @Post('request-password-reset')
-    async requestPasswordReset(@Body('username') username: string): Promise<any> {
-        return await this.authService.requestPasswordReset(username);
+    async requestPasswordReset(@Body() body: RequestPasswordResetDto): Promise<any> {
+        return await this.authService.requestPasswordReset(body.username);
     }
     @Post('reset-password')
-    async resetPassword(@Body('token') token: string, @Body('password') password: string): Promise<any> {
-        return await this.authService.resetPassword(token, password);
+    async resetPassword(@Body() body: ResetPasswordDto): Promise<any> {
+        return await this.authService.resetPassword(body.token, body.password);
     }
 
 }

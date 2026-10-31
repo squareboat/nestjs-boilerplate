@@ -3,8 +3,19 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 const core_1 = require('@nestjs/core');
 const console_1 = require('@squareboat/nest-console');
-const yargs = require('yargs');
+const path = require('path');
+// yargs-parser is a dependency of nest-console, so resolve it from there (works with pnpm too)
+const yargs = require(
+  require.resolve('yargs-parser', {
+    paths: [path.dirname(require.resolve('@squareboat/nest-console'))],
+  }),
+);
 const fs = require('fs');
+
+// Run every command from the project this file is in, whatever the current
+// directory is: .env, database/migrations, resources/lang and `init` are
+// all relative to it.
+process.chdir(__dirname);
 
 function checkFileExistsSync(filepath) {
   let flag = true;
@@ -16,7 +27,7 @@ function checkFileExistsSync(filepath) {
   return flag;
 }
 
-if (!checkFileExistsSync('./dist/src/app.js')) {
+if (!checkFileExistsSync(path.join(__dirname, 'dist/src/app.js'))) {
   // CHANGE THE FILE TO CHECK IF NEEDED
   console_1.Logger.error(' PLEASE BUILD THE CLI PROJECT FIRST ');
   console_1.Logger.info('🪄  Run command: `npm run build` '); // CHANGE THE BUILD COMMAND IF NEEDED
@@ -28,22 +39,32 @@ const app_1 = require('./dist/src/app'); // CHANGE THE IMPORT IF NEEDED
 async function bootstrap() {
   const app = await core_1.NestFactory.createApplicationContext(
     app_1.AppModule,
-    { logger: false },
+    { logger: false, abortOnError: false },
   );
-  const argv = yargs.argv;
-  const c = argv._[0];
-  argv.command = c;
-  if (typeof argv.command != 'string') {
-    console_1.Logger.error(' PLEASE ADD A COMMAND ');
-    return process.exit();
+  try {
+    const argv = yargs(process.argv.slice(2));
+    const c = argv._[0];
+    argv.command = c;
+    if (typeof argv.command != 'string') {
+      console_1.Logger.error(' PLEASE ADD A COMMAND ');
+      return;
+    }
+    const command = console_1.CommandMeta.getCommand(argv.command);
+    if (!command || !command.target) {
+      console_1.Logger.error(` ${argv.command} : command not found `);
+      return;
+    }
+    await console_1.CommandRunner.handle(command, argv);
+  } finally {
+    // runs the shutdown hooks, e.g. nestjs-objection closes its connection pools
+    await app.close();
   }
-  const command = console_1.CommandMeta.getCommand(argv.command);
-  if (!command || !command.target) {
-    console_1.Logger.error(` ${argv.command} : command not found `);
-    return process.exit();
-  }
-  await console_1.CommandRunner.handle(command, argv);
-  return process.exit();
 }
-bootstrap();
-//# sourceMappingURL=cli.js.map
+bootstrap().then(
+  () => process.exit(),
+  (e) => {
+    // the app context is created with `logger: false`, so print why it failed
+    console_1.Logger.error(` ${e && e.message ? e.message : e} `);
+    process.exit(1);
+  },
+);

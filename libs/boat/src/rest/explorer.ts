@@ -21,7 +21,7 @@ export class HttpExplorer {
     const wrappers = this.discovery.getControllers();
 
     wrappers.forEach((w) => {
-      const { instance, metatype } = w;
+      const { instance } = w;
       if (
         !instance ||
         typeof instance === 'string' ||
@@ -30,16 +30,12 @@ export class HttpExplorer {
         return;
       }
 
-      this.metadataScanner.scanFromPrototype(
-        instance,
+      const baseRoute = Reflect.getMetadata(PATH_METADATA, w.metatype);
+      for (const key of this.metadataScanner.getAllMethodNames(
         Object.getPrototypeOf(instance),
-        (key: string) =>
-          this.lookupListeners(
-            instance,
-            key,
-            Reflect.getMetadata(PATH_METADATA, w.metatype),
-          ),
-      );
+      )) {
+        this.lookupListeners(instance, key, baseRoute);
+      }
     });
   }
 

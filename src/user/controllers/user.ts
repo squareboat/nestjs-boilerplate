@@ -1,4 +1,4 @@
-import { Request, Response, RestController } from '@libs/boat';
+import { type Request, type Response, RestController } from '@libs/boat';
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { UserService } from '../services';
 import { UserDetailTransformer } from '@app/transformer';
@@ -19,8 +19,8 @@ export class UserController extends RestController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<Response> {
-    const user = await this.service.get();
-    console.log(user);
+    // req.user is set by JwtStrategy.validate()
+    const user = await this.service.findById(req.user.userId);
 
     return res.success(
       await this.transform(user, new UserDetailTransformer(), { req }),

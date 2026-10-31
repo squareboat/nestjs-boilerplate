@@ -2,7 +2,6 @@ import { RestController } from "@libs/boat";
 import { Body, Controller, Get, Post, Request, Response, UseGuards } from "@nestjs/common";
 import { JobDTO } from "../dto/job";
 import { JwtAuthGuard } from "@app/auth/guards/jwt-auth.guard";
-import { UserService } from "@app/user";
 import { RecruiterService } from "../services/recruiter.service";
 import { JobDetailTransformer } from "@app/transformer/job";
 
@@ -16,9 +15,8 @@ export class RecruiterController extends RestController {
     @Post('jobs')
     @UseGuards(JwtAuthGuard)
     async createjob(@Body() jobDTO: JobDTO, @Request() req, @Response() res): Promise<any> {
-        const user = req.user;
-        jobDTO.user_id = user.userId;
-        const job = await this.recruiterService.createJob(jobDTO);
+        // req.user is set by JwtStrategy.validate()
+        const job = await this.recruiterService.createJob(req.user.userId, jobDTO);
 
         return res.success(
             await this.transform(job, new JobDetailTransformer(), { req }),

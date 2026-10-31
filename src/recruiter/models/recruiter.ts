@@ -7,9 +7,9 @@ export class RecruiterModel extends BaseModel {
   id!: number;
   username!: string;
   password!: string;
-  dob!: Date;
-  first_name!: string;
-  last_name!: string;
+  dob!: string; // 'YYYY-MM-DD', see dateStrings in config/database.ts
+  firstName!: string;
+  lastName!: string;
   email!: string;
-  role!: string;
+  role!: number; // 0: user, 1: recruiter, 2: admin
 }

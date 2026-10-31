@@ -3,10 +3,13 @@ import { useContainer } from 'class-validator';
 import { ServerOptions } from './interfaces';
 import { ConfigService } from '@nestjs/config';
 import { RequestGuard } from './guards';
-import { ExceptionFilter } from '../exceptions';
+import { ExceptionFilter, ValidationFailed } from '../exceptions';
+import { BaseValidator } from '../validator/basevalidator';
 import * as os from 'node:os';
-import { INestApplication, Logger } from '@nestjs/common';
-const Cluster = require('node:cluster');
+import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
+import Cluster from 'node:cluster';
+import helmet from 'helmet';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 export class RestServer {
   private module: any;
   private options: ServerOptions;
@@ -17,26 +20,60 @@ export class RestServer {
    */
 
   static async make(module: any, options?: ServerOptions): Promise<void> {
-    const app = await NestFactory.create(module);
+    const app = await NestFactory.create<NestExpressApplication>(module);
+    const config = app.get(ConfigService, { strict: false });
 
     if (options?.addValidationContainer) {
       useContainer(app.select(module), { fallbackOnErrors: true });
     }
 
-    app.enableCors({ origin: true });
+    // on SIGTERM/SIGINT run the shutdown hooks before exiting, e.g.
+    // nestjs-objection closes its connection pools
+    app.enableShutdownHooks();
+
+    // security headers; also drops X-Powered-By
+    app.use(helmet());
+
+    const trustProxy = config.get<string>('app.trustProxy');
+    if (trustProxy)
+      app.set('trust proxy', RestServer.parseTrustProxy(trustProxy));
+
+    // only the origins from CORS_ORIGINS, none by default
+    const origins = config.get<string[]>('app.corsOrigins') ?? [];
+    if (origins.length) {
+      app.enableCors({ origin: origins.includes('*') ? '*' : origins });
+    }
 
     app.useGlobalGuards(new RequestGuard());
+
+    // Validate DTO bodies/queries/params. Unknown properties are dropped,
+    // and failures use the same 422 response as BaseValidator.fire().
+    const validator = new BaseValidator();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        stopAtFirstError: true,
+        exceptionFactory: (errors) =>
+          new ValidationFailed(validator.errorBag(errors)),
+      }),
+    );
     const { httpAdapter } = app.get(HttpAdapterHost);
     app.useGlobalFilters(new ExceptionFilter(httpAdapter));
     options.globalPrefix && app.setGlobalPrefix(options.globalPrefix);
-
-    const config = app.get(ConfigService, { strict: false });
 
     if (options?.isCluster) {
       await RestServer.makeWithCluster(app, options);
     } else {
       await app.listen(options.port || config.get<number>('app.port'));
     }
+  }
+
+  /** "true"/"false", a hop count ("1") or Express' own values ("loopback", IPs) */
+  static parseTrustProxy(value: string): boolean | number | string {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return /^\d+$/.test(value) ? +value : value;
   }
 
   static async makeWithCluster(
@@ -47,7 +84,7 @@ export class RestServer {
     const config = app.get(ConfigService, { strict: false });
     const port = options.port || config.get<number>('app.port');
 
-    if (Cluster.isMaster) {
+    if (Cluster.isPrimary) {
       Logger.log(
         `⚙️ Master is running on Port: ${port}, PID:${process.pid}, CPU: ${numCPUs}`,
       );
