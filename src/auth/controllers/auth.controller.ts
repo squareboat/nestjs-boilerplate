@@ -1,11 +1,10 @@
-import { Body, Controller, Inject, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { Body, Controller, Inject, Post, Res, UnauthorizedException } from "@nestjs/common";
 import { AuthService } from "../services/auth.service";
 import { LoginDto } from "../dto/login";
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { SignupDto } from "../dto/signup";
 import { UserService } from "@app/user";
 import { UserDetailTransformer } from "@app/transformer";
-import { Request, type Response, RestController } from '@libs/boat';
+import { type Response, RestController } from '@libs/boat';
 import { UserModuleConstants } from "@app/user/constants";
 import type { UserRepositoryContract } from "@app/user/repositories";
 

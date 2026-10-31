@@ -6,7 +6,7 @@ import { RequestGuard } from './guards';
 import { ExceptionFilter } from '../exceptions';
 import * as os from 'node:os';
 import { INestApplication, Logger } from '@nestjs/common';
-const Cluster = require('node:cluster');
+import Cluster from 'node:cluster';
 export class RestServer {
   private module: any;
   private options: ServerOptions;
@@ -47,7 +47,7 @@ export class RestServer {
     const config = app.get(ConfigService, { strict: false });
     const port = options.port || config.get<number>('app.port');
 
-    if (Cluster.isMaster) {
+    if (Cluster.isPrimary) {
       Logger.log(
         `⚙️ Master is running on Port: ${port}, PID:${process.pid}, CPU: ${numCPUs}`,
       );

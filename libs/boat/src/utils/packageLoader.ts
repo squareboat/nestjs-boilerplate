@@ -1,6 +1,7 @@
 export class Package {
   static load(pkgName: string): any {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       return require(pkgName);
     } catch (e) {
       console.error(

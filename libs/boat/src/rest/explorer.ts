@@ -21,7 +21,7 @@ export class HttpExplorer {
     const wrappers = this.discovery.getControllers();
 
     wrappers.forEach((w) => {
-      const { instance, metatype } = w;
+      const { instance } = w;
       if (
         !instance ||
         typeof instance === 'string' ||

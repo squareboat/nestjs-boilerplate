@@ -2,7 +2,6 @@ import { RestController } from "@libs/boat";
 import { Body, Controller, Get, Post, Request, Response, UseGuards } from "@nestjs/common";
 import { JobDTO } from "../dto/job";
 import { JwtAuthGuard } from "@app/auth/guards/jwt-auth.guard";
-import { UserService } from "@app/user";
 import { RecruiterService } from "../services/recruiter.service";
 import { JobDetailTransformer } from "@app/transformer/job";
 

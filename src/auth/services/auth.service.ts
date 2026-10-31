@@ -1,4 +1,4 @@
-import { UserModel, UserService } from '@app/user';
+import { UserService } from '@app/user';
 import { UserModuleConstants } from '@app/user/constants';
 import type { UserRepositoryContract } from '@app/user/repositories';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
