@@ -17,7 +17,9 @@ import { authRateLimit } from './rate-limit';
     JwtModule.registerAsync({
       useFactory: () => ({
         secret: jwtSecret(),
-        signOptions: { expiresIn: '1h' },
+        // one algorithm only, for signing and for verifying (reset tokens)
+        signOptions: { expiresIn: '1h', algorithm: 'HS256' },
+        verifyOptions: { algorithms: ['HS256'] },
       }),
     }),
     PassportModule,
