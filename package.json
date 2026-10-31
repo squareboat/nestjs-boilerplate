@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/squareboat/nestjs-boilerplate",
   "engines": {
-    "node": ">=24.15.0"
+    "node": "^24.15.0 || >=26.0.0"
   },
   "scripts": {
     "build": "nest build",
