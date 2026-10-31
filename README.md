@@ -20,6 +20,11 @@
 </a>
 </div>
 
+## Requirements
+
+- Node.js 24.15 or newer (Node 24 LTS, see `.nvmrc`). `@nestjs/cli` 12 needs 24.15+ on the 24 line, and Jest can only load the ESM-only Nest 12 packages from Node 24.9, so `nest build` and `npm test` do not work on Node 22.
+- MySQL (the default connection uses `mysql2`, see `config/database.ts` and `.env.example`).
+
 ## Features
 
 - _**Quick Setup**_ - Quickly setup and configure your application. [See more](https://squareboat.com/open-source/nestjs-boilerplate/setup)

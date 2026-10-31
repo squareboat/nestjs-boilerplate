@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/squareboat/nestjs-boilerplate",
   "engines": {
-    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+    "node": ">=24.15.0"
   },
   "scripts": {
     "build": "nest build",
@@ -68,7 +68,7 @@
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/lodash": "^4.17.27",
-    "@types/node": "^22.20.5",
+    "@types/node": "^24.19.2",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^7.2.1",
     "eslint": "^10.14.0",
