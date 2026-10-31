@@ -2,7 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { Command, ConsoleIO } from '@squareboat/nest-console';
 import { execFileSync } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
-import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { join } from 'node:path';
 
 /**
@@ -18,24 +24,46 @@ const BOILERPLATE_FILES = [
   'cover.jpg',
 ];
 
-const BOILERPLATE_REMOTE = /squareboat\/nestjs-boilerplate(\.git)?$/i;
+// the boilerplate's own repository on GitHub (https or ssh), nothing else
+const BOILERPLATE_REMOTE =
+  /^(https?:\/\/(www\.)?github\.com\/|git@github\.com:|ssh:\/\/git@github\.com\/)squareboat\/nestjs-boilerplate(\.git)?\/?$/i;
+
+// yargs-parser gives `true` for `--yes`, but the string "false" for
+// `--yes=false` or `--yes false`
+const isTrue = (value: unknown) => value === true || value === 'true';
 
 @Injectable()
-@Command('init {--yes}', {
+@Command('init {--yes} {--keep-git}', {
   desc: 'Set up a new project: removes the boilerplate files, creates .env with new secrets and a fresh git repository',
 })
 export class InitApplicationSetup {
   async handle(_cli: ConsoleIO): Promise<void> {
     const root = process.cwd();
     const files = BOILERPLATE_FILES.filter((f) => existsSync(join(root, f)));
-    const resetGit = this.isBoilerplateClone(root);
+    const resetGit =
+      !isTrue(_cli.option('keep-git')) && this.isBoilerplateClone(root);
+
+    if (resetGit) {
+      const unsaved = this.unsavedGitWork(root);
+      if (unsaved.length) {
+        _cli.error(
+          ' The git history would be replaced, but it has work that is not saved anywhere else: ',
+        );
+        for (const reason of unsaved) _cli.info(`   - ${reason}`);
+        _cli.info(
+          'Push or discard it first, or run `node cli init --keep-git` to keep .git as it is.',
+        );
+        process.exitCode = 1;
+        return;
+      }
+    }
 
     _cli.info(`🚀 Setting up the project in ${root}`);
     if (files.length) _cli.info(`   remove: ${files.join(', ')}`);
     if (resetGit)
       _cli.info('   replace the boilerplate git history with a new repository');
 
-    if (!_cli.option<boolean>('yes')) {
+    if (!isTrue(_cli.option('yes'))) {
       const ok = await _cli.confirm('Continue?', false);
       if (!ok) {
         _cli.info('Nothing changed.');
@@ -92,16 +120,49 @@ export class InitApplicationSetup {
    * its own history.
    */
   private isBoilerplateClone(root: string): boolean {
-    if (!existsSync(join(root, '.git'))) return false;
+    const dotGit = join(root, '.git');
+    // a directory: a .git file (submodule, worktree) is never removed
+    if (!existsSync(dotGit) || !statSync(dotGit).isDirectory()) return false;
     try {
-      const url = execFileSync('git', ['remote', 'get-url', 'origin'], {
-        cwd: root,
-        encoding: 'utf8',
-        stdio: ['ignore', 'pipe', 'ignore'],
-      }).trim();
-      return BOILERPLATE_REMOTE.test(url);
+      return BOILERPLATE_REMOTE.test(
+        this.git(root, 'remote', 'get-url', 'origin'),
+      );
     } catch {
       return false;
     }
+  }
+
+  /**
+   * What would be lost by deleting .git: changes, commits that are on no
+   * remote, stashes. Empty when everything is on the remote.
+   */
+  private unsavedGitWork(root: string): string[] {
+    try {
+      const unsaved: string[] = [];
+      if (this.git(root, 'status', '--porcelain')) {
+        unsaved.push('uncommitted or untracked changes (`git status`)');
+      }
+      if (
+        this.git(root, 'log', '--branches', '--not', '--remotes', '--oneline')
+      ) {
+        unsaved.push(
+          'commits that are on no remote (`git log --branches --not --remotes`)',
+        );
+      }
+      if (this.git(root, 'stash', 'list')) {
+        unsaved.push('stashed changes (`git stash list`)');
+      }
+      return unsaved;
+    } catch {
+      return ['the repository could not be checked with git'];
+    }
+  }
+
+  private git(root: string, ...args: string[]): string {
+    return execFileSync('git', args, {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
   }
 }
