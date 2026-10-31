@@ -12,6 +12,11 @@ import { ACCESS_TOKEN, RESET_PASSWORD_TOKEN, passwordFingerprint, resetPasswordS
 
 
 
+// bcrypt hash (cost 10, like real ones) of a random value nobody knows.
+// Compared against when the username does not exist, so a failed login
+// takes about as long either way.
+const DUMMY_PASSWORD_HASH = '$2b$10$/ieTi8IyUOQ.HHrCoNPS4e3JKTprZD97CmbAor/mwW3KRdObGjTxa';
+
 @Injectable()
 export class AuthService {
     constructor(
@@ -24,10 +29,9 @@ export class AuthService {
     async validateUser(username: string, password: string): Promise<UserModel | null> {
         const user = await this.userService.findOne(username);
 
-        if (user && await bcrypt.compare(password, user.password)) {
-            return user;
-        }
-        return null;
+        // always run bcrypt, otherwise unknown usernames answer much faster
+        const ok = await bcrypt.compare(password, user?.password ?? DUMMY_PASSWORD_HASH);
+        return user && ok ? user : null;
     }
 
     async signup(input: SignupDto): Promise<UserModel> {
