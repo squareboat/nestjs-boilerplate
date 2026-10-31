@@ -1,14 +1,16 @@
-import { IsDateString, IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
+import { IsDateString, IsEmail, IsNotEmpty, IsString, Matches, MaxLength } from "class-validator";
 import { IsPassword } from "./password";
 
 
 export class SignupDto {
     @IsString()
     @IsNotEmpty()
+    @MaxLength(255)
     first_name: string;
 
     @IsString()
     @IsNotEmpty()
+    @MaxLength(255)
     last_name: string;
 
     // a calendar date such as 1990-05-01 (stored in a DATE column)
@@ -21,10 +23,12 @@ export class SignupDto {
 
     @IsString()
     @IsNotEmpty()
+    @MaxLength(255)
     username: string;
 
 
     @IsNotEmpty()
     @IsEmail()
+    @MaxLength(255)
     email: string;
 }
