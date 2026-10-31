@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RecruiterModuleConstants } from '../constants';
-import { JobRepositoryContract } from '../repositories/job/contract';
+import type { JobRepositoryContract } from '../repositories/job/contract';
 import { JobModel } from '../models';
 
 @Injectable()

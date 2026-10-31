@@ -1,21 +1,29 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "esModuleInterop": true,
-    "target": "es2017",
+    "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": false,
+    "target": "ES2023",
+    "types": ["node", "jest"],
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "rootDir": ".",
     "incremental": true,
+    "skipLibCheck": true,
+    "strict": false,
     "paths": {
-      "@app/*": ["src/*"],
-      "@config/*": ["config/*"],
-      "@libs/boat": ["libs/boat/src"],
-      "@libs/boat/*": ["libs/boat/src/*"]
+      "@app/*": ["./src/*"],
+      "@config/*": ["./config/*"],
+      "@libs/boat": ["./libs/boat/src"],
+      "@libs/boat/*": ["./libs/boat/src/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

@@ -1,6 +1,6 @@
 import { UserModel, UserService } from '@app/user';
 import { UserModuleConstants } from '@app/user/constants';
-import { UserRepositoryContract } from '@app/user/repositories';
+import type { UserRepositoryContract } from '@app/user/repositories';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';

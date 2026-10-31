@@ -1,4 +1,4 @@
-import { Request, Response, RestController } from '@libs/boat';
+import { type Request, type Response, RestController } from '@libs/boat';
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { UserService } from '../services';
 import { UserDetailTransformer } from '@app/transformer';

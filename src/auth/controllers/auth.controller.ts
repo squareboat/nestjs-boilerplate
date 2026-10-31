@@ -5,9 +5,9 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { SignupDto } from "../dto/signup";
 import { UserService } from "@app/user";
 import { UserDetailTransformer } from "@app/transformer";
-import { Request, Response, RestController } from '@libs/boat';
+import { Request, type Response, RestController } from '@libs/boat';
 import { UserModuleConstants } from "@app/user/constants";
-import { UserRepositoryContract } from "@app/user/repositories";
+import type { UserRepositoryContract } from "@app/user/repositories";
 
 
 @Controller('api/auth')

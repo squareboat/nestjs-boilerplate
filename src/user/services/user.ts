@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { UserRepositoryContract } from '../repositories';
+import type { UserRepositoryContract } from '../repositories';
 import { UserModuleConstants } from '../constants';
 import { SignupDto } from '@app/auth/dto/signup';
 import { UserModel } from '../models';
