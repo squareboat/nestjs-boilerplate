@@ -27,6 +27,10 @@ export class RestServer {
       useContainer(app.select(module), { fallbackOnErrors: true });
     }
 
+    // on SIGTERM/SIGINT run the shutdown hooks before exiting, e.g.
+    // nestjs-objection closes its connection pools
+    app.enableShutdownHooks();
+
     // security headers; also drops X-Powered-By
     app.use(helmet());
 

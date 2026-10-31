@@ -41,23 +41,30 @@ async function bootstrap() {
     app_1.AppModule,
     { logger: false, abortOnError: false },
   );
-  const argv = yargs(process.argv.slice(2));
-  const c = argv._[0];
-  argv.command = c;
-  if (typeof argv.command != 'string') {
-    console_1.Logger.error(' PLEASE ADD A COMMAND ');
-    return process.exit();
+  try {
+    const argv = yargs(process.argv.slice(2));
+    const c = argv._[0];
+    argv.command = c;
+    if (typeof argv.command != 'string') {
+      console_1.Logger.error(' PLEASE ADD A COMMAND ');
+      return;
+    }
+    const command = console_1.CommandMeta.getCommand(argv.command);
+    if (!command || !command.target) {
+      console_1.Logger.error(` ${argv.command} : command not found `);
+      return;
+    }
+    await console_1.CommandRunner.handle(command, argv);
+  } finally {
+    // runs the shutdown hooks, e.g. nestjs-objection closes its connection pools
+    await app.close();
   }
-  const command = console_1.CommandMeta.getCommand(argv.command);
-  if (!command || !command.target) {
-    console_1.Logger.error(` ${argv.command} : command not found `);
-    return process.exit();
-  }
-  await console_1.CommandRunner.handle(command, argv);
-  return process.exit();
 }
-bootstrap().catch((e) => {
-  // the app context is created with `logger: false`, so print why it failed
-  console_1.Logger.error(` ${e && e.message ? e.message : e} `);
-  process.exit(1);
-});
+bootstrap().then(
+  () => process.exit(),
+  (e) => {
+    // the app context is created with `logger: false`, so print why it failed
+    console_1.Logger.error(` ${e && e.message ? e.message : e} `);
+    process.exit(1);
+  },
+);
