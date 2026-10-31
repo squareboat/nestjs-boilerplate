@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { mailService } from './mail.service';
 import { ValidationFailed } from '@libs/boat';
 import { SignupDto } from '../dto/signup';
+import { ACCESS_TOKEN, RESET_PASSWORD_TOKEN, resetPasswordSecret } from '../secrets';
 
 
 
@@ -53,7 +54,7 @@ export class AuthService {
     }
 
     async login(user: any) {
-        const payload = { username: user.username, sub: user.id };
+        const payload = { username: user.username, sub: user.id, typ: ACCESS_TOKEN };
 
         return {
             access_token: this.jwtService.sign(payload),
@@ -68,8 +69,11 @@ export class AuthService {
         if (!user) {
             return { message: 'Password reset email sent' };
         }
-        const payload = { sub: user.id, email: user.email };
-        const token = this.jwtService.sign(payload, { secret: process.env.RESET_PASSWORD_SECRET, expiresIn: '1h' });
+        const payload = { sub: user.id, typ: RESET_PASSWORD_TOKEN };
+        const token = this.jwtService.sign(payload, {
+            secret: resetPasswordSecret(user.password),
+            expiresIn: '1h',
+        });
 
         await this.mailService.sendResetEmail(user.email, token);
 
@@ -77,20 +81,26 @@ export class AuthService {
     }
 
     async resetPassword(token: string, newPassword: string): Promise<any> {
+        const invalid = new BadRequestException('Invalid token or password');
+
+        // The token is signed with the user's current password hash, so the
+        // user is needed before it can be verified. The unverified `sub` is
+        // only used for that lookup.
+        const claims = this.jwtService.decode(token);
+        if (claims?.typ !== RESET_PASSWORD_TOKEN || !claims.sub) throw invalid;
+
+        const user = await this.users.firstWhere({ id: claims.sub }, false);
+        if (!user) throw invalid;
+
         try {
-            const payload = this.jwtService.verify(token, { secret: process.env.RESET_PASSWORD_SECRET });
-
-            const user = await this.users.firstWhere({ id: payload.sub });
-
-            if (!user) {
-                throw new Error('User not found');
-            }
-            const newpassword: string = await bcrypt.hash(newPassword, 10);
-            await this.users.update(user, { password: newpassword });
-            return { message: 'Password reset successful' };
-        } catch (error) {
-            console.error(error);
-            throw new BadRequestException('Invalid token or password');
+            this.jwtService.verify(token, { secret: resetPasswordSecret(user.password) });
+        } catch {
+            throw invalid;
         }
+
+        // changing the hash also invalidates this and every other reset token
+        const password: string = await bcrypt.hash(newPassword, 10);
+        await this.users.update(user, { password });
+        return { message: 'Password reset successful' };
     }
 }

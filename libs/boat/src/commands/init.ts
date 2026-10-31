@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Command, ConsoleIO } from '@squareboat/nest-console';
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, existsSync, rmSync } from 'node:fs';
+import { randomBytes } from 'node:crypto';
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 /**
@@ -21,7 +22,7 @@ const BOILERPLATE_REMOTE = /squareboat\/nestjs-boilerplate(\.git)?$/i;
 
 @Injectable()
 @Command('init {--yes}', {
-  desc: 'Set up a new project: removes the boilerplate files, creates .env and a fresh git repository',
+  desc: 'Set up a new project: removes the boilerplate files, creates .env with new secrets and a fresh git repository',
 })
 export class InitApplicationSetup {
   async handle(_cli: ConsoleIO): Promise<void> {
@@ -50,8 +51,10 @@ export class InitApplicationSetup {
     const env = join(root, '.env');
     const envExample = join(root, '.env.example');
     if (!existsSync(env) && existsSync(envExample)) {
-      copyFileSync(envExample, env);
-      _cli.info('✅ Copied .env.example to .env');
+      writeFileSync(env, this.withSecrets(readFileSync(envExample, 'utf8')), {
+        mode: 0o600,
+      });
+      _cli.info('✅ Created .env from .env.example, with new random secrets');
     }
 
     if (resetGit) {
@@ -67,6 +70,20 @@ export class InitApplicationSetup {
     }
 
     _cli.success('⚡ You are all set now! Do amazing things!');
+  }
+
+  /**
+   * Fills empty JWT_SECRET / RESET_PASSWORD_SECRET lines with different
+   * random values. The API refuses to start without them.
+   */
+  private withSecrets(env: string): string {
+    for (const key of ['JWT_SECRET', 'RESET_PASSWORD_SECRET']) {
+      env = env.replace(
+        new RegExp(`^${key}=[ \\t]*$`, 'm'),
+        `${key}=${randomBytes(32).toString('base64url')}`,
+      );
+    }
+    return env;
   }
 
   /**

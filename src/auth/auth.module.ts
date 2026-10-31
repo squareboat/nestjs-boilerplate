@@ -6,13 +6,17 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from './controllers/auth.controller';
 import { mailService } from './services/mail.service';
+import { jwtSecret } from './secrets';
 
 @Module({
   imports: [
     UserModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1h' },
+    // a factory, so the secret is read after .env has been loaded
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: jwtSecret(),
+        signOptions: { expiresIn: '1h' },
+      }),
     }),
     PassportModule,
 
