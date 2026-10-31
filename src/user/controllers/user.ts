@@ -19,7 +19,8 @@ export class UserController extends RestController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<Response> {
-    const user = await this.service.get();
+    // req.user is set by JwtStrategy.validate()
+    const user = await this.service.findById(req.user.userId);
 
     return res.success(
       await this.transform(user, new UserDetailTransformer(), { req }),

@@ -14,8 +14,8 @@ export class UserService {
     @Inject(UserModuleConstants.userRepo) private users: UserRepositoryContract,
   ) { }
 
-  async get(): Promise<Record<string, any>> {
-    return this.users.firstWhere({});
+  async findById(id: number): Promise<UserModel | undefined> {
+    return this.users.firstWhere({ id });
   }
 
   async findOne(username: string): Promise<UserModel | undefined> {
