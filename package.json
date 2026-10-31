@@ -51,15 +51,12 @@
     "helmet": "^8.3.0",
     "knex": "^3.3.0",
     "lodash": "^4.18.1",
-    "moment": "^2.31.0",
     "mysql2": "^3.24.6",
     "objection": "^3.9.2",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2",
-    "ulid": "^3.0.2",
-    "uuid": "^11.1.1"
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^12.0.11",
