@@ -5,6 +5,7 @@ import { randomBytes } from 'node:crypto';
 import {
   existsSync,
   readFileSync,
+  realpathSync,
   rmSync,
   statSync,
   writeFileSync,
@@ -99,7 +100,15 @@ export class InitApplicationSetup {
     if (resetGit) {
       rmSync(join(root, '.git'), { recursive: true, force: true });
     }
-    if (!existsSync(join(root, '.git'))) {
+    const parentRepo = this.enclosingRepo(root);
+    if (parentRepo) {
+      // e.g. monorepo/apps/api: a nested repository would break the parent
+      _cli.info(
+        parentRepo === realpathSync(root)
+          ? '✅ Kept the existing git repository'
+          : `✅ Kept git as it is (the project is inside ${parentRepo})`,
+      );
+    } else {
       try {
         execFileSync('git', ['init'], { cwd: root, stdio: 'ignore' });
         _cli.info('✅ Initialized a new git repository');
@@ -164,6 +173,18 @@ export class InitApplicationSetup {
       );
     } catch {
       return false;
+    }
+  }
+
+  /**
+   * The top-level directory of the git work tree `root` is in (its own or
+   * a parent's), or null when it is in none.
+   */
+  private enclosingRepo(root: string): string | null {
+    try {
+      return this.git(root, 'rev-parse', '--show-toplevel') || null;
+    } catch {
+      return null;
     }
   }
 
