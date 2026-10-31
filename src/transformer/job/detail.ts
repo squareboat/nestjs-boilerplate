@@ -5,8 +5,6 @@ export class JobDetailTransformer extends Transformer {
   defaultIncludes = [];
 
   async transform(job: Record<string, any>): Promise<Record<string, any>> {
-    console.log('Transforming job: ', job);
-    
     return {
       id: job.id,
       title: job.title,
