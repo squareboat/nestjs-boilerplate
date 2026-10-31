@@ -48,7 +48,7 @@ export class AuthController extends RestController {
             //         throw new Error('Username already exists');
             //     }
             // }
-            const user = await this.users.create(signupDTO);
+            const user = await this.authService.signup(signupDTO);
 
             return res.success(
                 await this.transform(user, new UserDetailTransformer()),

@@ -1,10 +1,11 @@
-import { UserService } from '@app/user';
+import { UserModel, UserService } from '@app/user';
 import { UserModuleConstants } from '@app/user/constants';
 import type { UserRepositoryContract } from '@app/user/repositories';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { mailService } from './mail.service';
+import { SignupDto } from '../dto/signup';
 
 
 
@@ -26,6 +27,12 @@ export class AuthService {
             return result;
         }
         return null;
+    }
+
+    async signup(input: SignupDto): Promise<UserModel> {
+        // store a bcrypt hash, validateUser() compares against it
+        const password = await bcrypt.hash(input.password, 10);
+        return this.users.create({ ...input, password });
     }
 
     async login(user: any) {
