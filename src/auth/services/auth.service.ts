@@ -63,8 +63,10 @@ export class AuthService {
     async requestPasswordReset(username: string): Promise<any> {
         const user = await this.userService.findOne(username);
 
+        // same answer whether or not the user exists, so the endpoint
+        // cannot be used to find out which usernames are registered
         if (!user) {
-            throw new Error('User not found');
+            return { message: 'Password reset email sent' };
         }
         const payload = { sub: user.id, email: user.email };
         const token = this.jwtService.sign(payload, { secret: process.env.RESET_PASSWORD_SECRET, expiresIn: '1h' });

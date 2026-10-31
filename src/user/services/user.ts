@@ -19,7 +19,8 @@ export class UserService {
   }
 
   async findOne(username: string): Promise<UserModel | undefined> {
-    return this.users.firstWhere({ username: username });
+    // undefined instead of a 404 when there is no such user
+    return this.users.firstWhere({ username: username }, false);
   }
 
   // async create(user: SignupDto): Promise<User> {
