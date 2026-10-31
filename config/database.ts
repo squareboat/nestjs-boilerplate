@@ -19,6 +19,16 @@ export default registerAs(
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
             charset: 'utf8',
+            // DATE columns (e.g. users.dob) as 'YYYY-MM-DD' strings, not a
+            // Date at local midnight that shifts by the time zone offset
+            dateStrings: ['DATE'],
+            // read and write DATETIME/TIMESTAMP values as UTC ...
+            timezone: 'Z',
+          },
+          pool: {
+            // ... and make the session UTC too, whatever the server's zone
+            afterCreate: (conn, done) =>
+              conn.query("SET time_zone = '+00:00'", (err) => done(err, conn)),
           },
           useNullAsDefault: true,
           migrations: {
