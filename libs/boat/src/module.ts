@@ -3,6 +3,7 @@ import config from '@config/index';
 import { ConfigModule } from '@nestjs/config';
 import { DiscoveryModule } from '@nestjs/core';
 import { BaseValidator } from './validator';
+import { InitApplicationSetup } from './commands';
 
 @Global()
 @Module({
@@ -14,7 +15,7 @@ import { BaseValidator } from './validator';
       load: config,
     }),
   ],
-  providers: [BaseValidator],
+  providers: [BaseValidator, InitApplicationSetup],
   exports: [],
 })
 export class BoatModule {}

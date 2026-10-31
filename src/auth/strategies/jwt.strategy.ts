@@ -8,7 +8,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET,
+      // Read the secret per request instead of at startup, so the app (and
+      // `node cli ...` commands such as `init`) can boot before JWT_SECRET is set.
+      // Without a secret every token is rejected.
+      secretOrKeyProvider: (_req, _token, done) =>
+        done(null, process.env.JWT_SECRET),
     });
   }
 

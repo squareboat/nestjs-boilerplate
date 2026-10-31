@@ -34,7 +34,7 @@ const app_1 = require('./dist/src/app'); // CHANGE THE IMPORT IF NEEDED
 async function bootstrap() {
   const app = await core_1.NestFactory.createApplicationContext(
     app_1.AppModule,
-    { logger: false },
+    { logger: false, abortOnError: false },
   );
   const argv = yargs(process.argv.slice(2));
   const c = argv._[0];
@@ -51,4 +51,8 @@ async function bootstrap() {
   await console_1.CommandRunner.handle(command, argv);
   return process.exit();
 }
-bootstrap();
+bootstrap().catch((e) => {
+  // the app context is created with `logger: false`, so print why it failed
+  console_1.Logger.error(` ${e && e.message ? e.message : e} `);
+  process.exit(1);
+});
