@@ -13,7 +13,7 @@ export class JobDetailTransformer extends Transformer {
       description: job.description,
       location: job.location,
       skills: job.skills,
-      user_id: job.user_id,
+      user_id: job.userId,
       createdAt: job.createdAt,
       updatedAt: job.updatedAt,
     };

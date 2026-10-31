@@ -8,8 +8,8 @@ export class UserModel extends BaseModel {
   username!: string;
   password!: string;
   dob!: Date;
-  first_name!: string;
-  last_name!: string;
+  firstName!: string;
+  lastName!: string;
   email!: string;
   role!: string;
 }

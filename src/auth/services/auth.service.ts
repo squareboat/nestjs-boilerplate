@@ -31,7 +31,15 @@ export class AuthService {
     async signup(input: SignupDto): Promise<UserModel> {
         // store a bcrypt hash, validateUser() compares against it
         const password = await bcrypt.hash(input.password, 10);
-        return this.users.create({ ...input, password });
+        // model properties are camelCase, knexSnakeCaseMappers maps them to the columns
+        return this.users.create({
+            firstName: input.first_name,
+            lastName: input.last_name,
+            dob: input.dob,
+            username: input.username,
+            email: input.email,
+            password,
+        });
     }
 
     async login(user: any) {

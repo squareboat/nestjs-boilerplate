@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { RecruiterModuleConstants } from '../constants';
 import type { JobRepositoryContract } from '../repositories/job/contract';
 import { JobModel } from '../models';
+import { JobDTO } from '../dto/job';
 
 @Injectable()
 export class RecruiterService {
@@ -10,10 +11,15 @@ export class RecruiterService {
     ) { }
 
 
-    async createJob(job): Promise<JobModel> {
-        console.log('Job created', job);
-        // save to database
-        return await this.jobRepo.create(job);
+    async createJob(userId: number, job: JobDTO): Promise<JobModel> {
+        // model properties are camelCase, knexSnakeCaseMappers maps them to the columns
+        return await this.jobRepo.create({
+            userId,
+            title: job.title,
+            description: job.description,
+            location: job.location,
+            skills: job.skills,
+        });
     }
 
     async fetchAllJobsPaginated(page: number, limit: number) {

@@ -6,7 +6,7 @@ export class JobModel extends BaseModel {
   }
 
   id!: number;
-  user_id!: number;
+  userId!: number;
   title!: string;
   description!: string;
   location!: string;
