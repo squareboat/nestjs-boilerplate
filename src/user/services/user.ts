@@ -15,7 +15,7 @@ export class UserService {
   ) { }
 
   async findById(id: number): Promise<UserModel | undefined> {
-    return this.users.firstWhere({ id });
+    return this.users.firstWhere({ id }, false);
   }
 
   async findOne(username: string): Promise<UserModel | undefined> {

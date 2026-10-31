@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { mailService } from './mail.service';
 import { ValidationFailed } from '@libs/boat';
 import { SignupDto } from '../dto/signup';
-import { ACCESS_TOKEN, RESET_PASSWORD_TOKEN, resetPasswordSecret } from '../secrets';
+import { ACCESS_TOKEN, RESET_PASSWORD_TOKEN, passwordFingerprint, resetPasswordSecret } from '../secrets';
 
 
 
@@ -20,12 +20,11 @@ export class AuthService {
         @Inject(UserModuleConstants.userRepo) private users: UserRepositoryContract,
     ) { }
 
-    async validateUser(username: string, password: string): Promise<any> {
+    async validateUser(username: string, password: string): Promise<UserModel | null> {
         const user = await this.userService.findOne(username);
 
         if (user && await bcrypt.compare(password, user.password)) {
-            const { password, ...result } = user;
-            return result;
+            return user;
         }
         return null;
     }
@@ -53,8 +52,14 @@ export class AuthService {
         });
     }
 
-    async login(user: any) {
-        const payload = { username: user.username, sub: user.id, typ: ACCESS_TOKEN };
+    async login(user: UserModel) {
+        const payload = {
+            username: user.username,
+            sub: user.id,
+            typ: ACCESS_TOKEN,
+            // ties the token to the current password, see JwtStrategy.validate()
+            pwd: passwordFingerprint(user.password),
+        };
 
         return {
             access_token: this.jwtService.sign(payload),

@@ -5,6 +5,8 @@
  * stops working as soon as the password changes.
  * Every token also carries a `typ` claim that is checked on use.
  */
+import { createHmac } from 'node:crypto';
+
 export const ACCESS_TOKEN = 'access';
 export const RESET_PASSWORD_TOKEN = 'password_reset';
 
@@ -14,6 +16,18 @@ export function jwtSecret(): string {
 
 export function resetPasswordSecret(passwordHash: string): string {
   return (process.env.RESET_PASSWORD_SECRET ?? '') + passwordHash;
+}
+
+/**
+ * A short HMAC of the password hash, stored in access tokens (`pwd`).
+ * JwtStrategy compares it with the current hash, so changing the
+ * password logs out every token issued before.
+ */
+export function passwordFingerprint(passwordHash: string): string {
+  return createHmac('sha256', jwtSecret())
+    .update(passwordHash)
+    .digest('base64url')
+    .slice(0, 22);
 }
 
 /**

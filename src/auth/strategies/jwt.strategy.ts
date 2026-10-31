@@ -1,11 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { ACCESS_TOKEN, jwtSecret } from '../secrets';
+import { UserService } from '@app/user';
+import { ACCESS_TOKEN, jwtSecret, passwordFingerprint } from '../secrets';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private users: UserService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -20,7 +21,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // only access tokens, never a password reset (or any other) token
     if (payload?.typ !== ACCESS_TOKEN) throw new UnauthorizedException();
 
-    // You can add more logic here, e.g., fetch user from DB
-    return { userId: payload.sub, username: payload.username };
+    // the user must still exist and have the password the token was issued for
+    const user = await this.users.findById(payload.sub);
+    if (!user || payload.pwd !== passwordFingerprint(user.password)) {
+      throw new UnauthorizedException();
+    }
+
+    return { userId: user.id, username: user.username };
   }
 } 
