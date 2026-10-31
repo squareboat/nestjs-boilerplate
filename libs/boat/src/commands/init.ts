@@ -76,6 +76,17 @@ export class InitApplicationSetup {
       _cli.info('   replace the boilerplate git history with a new repository');
 
     if (!isTrue(_cli.option('yes'))) {
+      // inquirer would wait forever on a closed or piped stdin
+      if (!process.stdin.isTTY) {
+        _cli.error(
+          ' init needs a terminal to ask before it changes anything. ',
+        );
+        _cli.info(
+          'Run `node cli init --yes` to go ahead without the question.',
+        );
+        process.exitCode = 1;
+        return;
+      }
       const ok = await _cli.confirm('Continue?', false);
       if (!ok) {
         _cli.info('Nothing changed.');
