@@ -1,4 +1,4 @@
-import { IsDate, IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsDateString, IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
 
 
 export class SignupDto {
@@ -10,10 +10,10 @@ export class SignupDto {
     @IsNotEmpty()
     last_name: string;
 
-    @IsString()
-    @IsDate()
-    @IsNotEmpty()
-    dob: Date;
+    // a calendar date such as 1990-05-01 (stored in a DATE column)
+    @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'dob must be a date like 1990-05-01' })
+    @IsDateString({ strict: true })
+    dob: string;
 
     @IsString()
     @IsNotEmpty()

@@ -3,9 +3,10 @@ import { useContainer } from 'class-validator';
 import { ServerOptions } from './interfaces';
 import { ConfigService } from '@nestjs/config';
 import { RequestGuard } from './guards';
-import { ExceptionFilter } from '../exceptions';
+import { ExceptionFilter, ValidationFailed } from '../exceptions';
+import { BaseValidator } from '../validator/basevalidator';
 import * as os from 'node:os';
-import { INestApplication, Logger } from '@nestjs/common';
+import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import Cluster from 'node:cluster';
 export class RestServer {
   private module: any;
@@ -26,6 +27,19 @@ export class RestServer {
     app.enableCors({ origin: true });
 
     app.useGlobalGuards(new RequestGuard());
+
+    // Validate DTO bodies/queries/params. Unknown properties are dropped,
+    // and failures use the same 422 response as BaseValidator.fire().
+    const validator = new BaseValidator();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        stopAtFirstError: true,
+        exceptionFactory: (errors) =>
+          new ValidationFailed(validator.errorBag(errors)),
+      }),
+    );
     const { httpAdapter } = app.get(HttpAdapterHost);
     app.useGlobalFilters(new ExceptionFilter(httpAdapter));
     options.globalPrefix && app.setGlobalPrefix(options.globalPrefix);

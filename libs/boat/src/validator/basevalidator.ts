@@ -1,5 +1,5 @@
 import { startCase, isEmpty } from 'lodash';
-import { validate } from 'class-validator';
+import { validate, ValidationError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { Injectable, Type } from '@nestjs/common';
 import { ValidationFailed } from '../exceptions';
@@ -13,27 +13,34 @@ export class BaseValidator {
     });
 
     /**
-     * Process errors, if any.
-     * Throws new ValidationFailed Exception with validation errors
+     * Throws new ValidationFailed Exception with validation errors, if any.
      */
-    let bag = {};
     if (errors.length > 0) {
-      for (const error of errors) {
-        const errorsFromParser = this.parseError(error);
-        const childErrorBag = {};
-        for (const key in errorsFromParser) {
-          if (!isEmpty(errorsFromParser[key])) {
-            childErrorBag[key] = errorsFromParser[key];
-          }
-        }
-
-        bag = { ...bag, ...childErrorBag };
-      }
-
-      throw new ValidationFailed(bag);
+      throw new ValidationFailed(this.errorBag(errors));
     }
 
     return schema;
+  }
+
+  /**
+   * Turns class-validator errors into `{ field: [messages] }`.
+   * Also used by the global ValidationPipe (see RestServer).
+   */
+  errorBag(errors: ValidationError[]): Record<string, string[]> {
+    let bag = {};
+    for (const error of errors) {
+      const errorsFromParser = this.parseError(error);
+      const childErrorBag = {};
+      for (const key in errorsFromParser) {
+        if (!isEmpty(errorsFromParser[key])) {
+          childErrorBag[key] = errorsFromParser[key];
+        }
+      }
+
+      bag = { ...bag, ...childErrorBag };
+    }
+
+    return bag;
   }
 
   parseError(error) {
